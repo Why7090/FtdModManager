@@ -7,6 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FtdModManager", "FtdModMana
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{95AE01D3-FFA3-4807-A377-40A71090B3EE}"
 	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
 		header.header = header.header
 		modmanager.json = modmanager.json
 		plugin.json = plugin.json
