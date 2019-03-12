@@ -1,0 +1,9 @@
+{
+  "Authors": "Authors include Why7090",
+  "Version": "037f847e-2226-4d33-9b9b-f5a305dcf89e",
+  "ComponentId": {
+    "Guid": "6f6f9b3a-89e7-47a7-a830-9c627249eba9",
+    "Name": "FtdModManager"
+  },
+  "Description": "Install and update mods"
+}
