@@ -22,7 +22,7 @@ namespace FtdModManager
         [JsonConverter(typeof(StringEnumConverter))]
         public UpdateType updateType = UpdateType.Disabled;
         public bool checkCompatibility = false;
-        public string currentTreeUrl = "";
+        public string localVersion = "";
 
         [JsonIgnore]
         public Modification mod;
@@ -115,7 +115,7 @@ namespace FtdModManager
                 if (!await CheckUpdate()) return "No update available";
             }
             string log = await ModManager.DownloadModAsync(newTreeUrl, basePath, modData.fileUrlTemplate);
-            currentTreeUrl = newTreeUrl;
+            localVersion = newTreeUrl;
             Save();
             return log;
         }
@@ -145,7 +145,7 @@ namespace FtdModManager
                 updateMessage = "";
 
                 newTreeUrl = string.Format(modData.recursiveTreeUrlTemplate, commit.sha);
-                return newTreeUrl != currentTreeUrl;
+                return newTreeUrl != localVersion;
             }
             catch (Exception e)
             {
@@ -168,7 +168,7 @@ namespace FtdModManager
             updateMessage = release.body;
 
             newTreeUrl = string.Format(modData.recursiveTreeUrlTemplate, tag.commit.sha);
-            return newTreeUrl != currentTreeUrl;
+            return newTreeUrl != localVersion;
         }
     }
 }

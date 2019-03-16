@@ -6,10 +6,8 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using BrilliantSkies.Common.Circuits.ComponentTypes;
 using BrilliantSkies.Modding;
 using FtdModManager.GitHub;
-using FtdModManager.ThirdParty;
 using GitSharp;
 using Newtonsoft.Json;
 

@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
 using BrilliantSkies.Modding;
 using BrilliantSkies.Modding.Managing;
-using UnityEngine;
 
 namespace FtdModManager
 {
@@ -26,7 +23,9 @@ namespace FtdModManager
                 var pref = ModPreferences.FromMod(mod);
                 mods.Add(pref);
                 pref.RemoveTempFiles();
-                pref.CheckUpdate().ContinueWith(pref.ConfirmUpdate);
+
+                var updateInfo = new ModUpdateInfo(pref.modData, pref);
+                updateInfo.CheckAndPrepareUpdate().ContinueWith(updateInfo.ConfirmUpdate);
             }
             return true;
         }

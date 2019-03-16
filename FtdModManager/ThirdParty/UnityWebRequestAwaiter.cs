@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace FtdModManager.ThirdParty
+namespace FtdModManager
 {
     // https://gist.github.com/krzys-h/9062552e33dd7bd7fe4a6c12db109a1a
     public class UnityWebRequestAwaiter : INotifyCompletion
