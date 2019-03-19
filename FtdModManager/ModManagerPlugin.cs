@@ -24,7 +24,7 @@ namespace FtdModManager
                 mods.Add(pref);
                 pref.RemoveTempFiles();
 
-                var updateInfo = new ModUpdateInfo(pref.modData, pref);
+                var updateInfo = new ModUpdateInfo(pref.manifest, pref);
                 updateInfo.CheckAndPrepareUpdate().ContinueWith(updateInfo.ConfirmUpdate);
             }
             return true;

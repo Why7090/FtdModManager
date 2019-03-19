@@ -3,7 +3,7 @@ using Newtonsoft.Json.Converters;
 
 namespace FtdModManager
 {
-    public class ModData
+    public class ModManifest
     {
         public string latestCommitUrl;          // github: https://api.github.com/repos/<user>/<repo>/commits/<branch>
         public string latestReleaseUrl;         // github: https://api.github.com/repos/<user>/<repo>/releases/latest
@@ -15,9 +15,9 @@ namespace FtdModManager
         [JsonConverter(typeof(StringEnumConverter))]
         public ModPreferences.UpdateType defaultUpdateType;
 
-        public ModData() { }
+        public ModManifest() { }
 
-        public ModData(
+        public ModManifest(
             string latestCommitUrl, string latestReleaseUrl,
             string tagUrlTemplate, string recursiveTreeUrlTemplate, string fileUrlTemplate,
             ModPreferences.UpdateType defaultUpdateType)
@@ -30,9 +30,9 @@ namespace FtdModManager
             this.defaultUpdateType = defaultUpdateType;
         }
 
-        public static ModData FromGithubRepo (string user, string repo, string branch, ModPreferences.UpdateType defaultUpdateType)
+        public static ModManifest FromGithubRepo (string user, string repo, string branch, ModPreferences.UpdateType defaultUpdateType)
         {
-            return new ModData(
+            return new ModManifest(
                 $"https://api.github.com/repos/{user}/{repo}/commits/{branch}",
                 $"https://api.github.com/repos/{user}/{repo}/releases/latest",
                 $"https://api.github.com/repos/{user}/{repo}/git/refs/tags/{{0}}",

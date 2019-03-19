@@ -17,7 +17,7 @@ namespace FtdModManager
         }
 
         [JsonIgnore]
-        public ModData modData;
+        public ModManifest manifest;
 
         [JsonConverter(typeof(StringEnumConverter))]
         public UpdateType updateType = UpdateType.Disabled;
@@ -36,7 +36,7 @@ namespace FtdModManager
         public string updateMessage = "";
 
         public const string prefFileName = "user.modpref";
-        public const string dataFileName = "modmanager.json";
+        public const string manifestFileName = "modmanifest.json";
 
         public ModPreferences() { }
 
@@ -48,19 +48,19 @@ namespace FtdModManager
                 mod = mod
             };
             
-            string modDataPath = Path.Combine(self.basePath, dataFileName);
-            if (!File.Exists(modDataPath) || Directory.Exists(Path.Combine(self.basePath, ".git")))
+            string manifestPath = Path.Combine(self.basePath, manifestFileName);
+            if (!File.Exists(manifestPath) || Directory.Exists(Path.Combine(self.basePath, ".git")))
             {
                 self.updateType = UpdateType.Disabled;
             }
             else
             {
-                self.modData = JsonConvert.DeserializeObject<ModData>(File.ReadAllText(modDataPath));
+                self.manifest = JsonConvert.DeserializeObject<ModManifest>(File.ReadAllText(manifestPath));
 
                 string modPrefPath = Path.Combine(self.basePath, prefFileName);
                 if (!File.Exists(modPrefPath))
                 {
-                    self.updateType = self.modData.defaultUpdateType;
+                    self.updateType = self.manifest.defaultUpdateType;
                     self.Save();
                 }
                 else
@@ -79,14 +79,14 @@ namespace FtdModManager
 
         public void RemoveTempFiles()
         {
-            ModManager.RemoveTempFilesInDirectory(basePath);
+            Helpers.RemoveTempFilesInDirectory(basePath);
         }
 
         public void ConfirmUpdate(Task<bool> checkTask)
         {
             if (checkTask.Result)
             {
-                ModManager.Log($"Update found for {mod.Header.ComponentId.Name}");
+                Helpers.Log($"Update found for {mod.Header.ComponentId.Name}");
                 GuiPopUp.Instance.Add(new PopupConfirmation(
                     $"{mod.Header.ComponentId.Name} : New version available",
                     $"{updateTitle}\n\n{updateMessage}",
@@ -114,7 +114,7 @@ namespace FtdModManager
             {
                 if (!await CheckUpdate()) return "No update available";
             }
-            string log = await ModManager.DownloadModAsync(newTreeUrl, basePath, modData.fileUrlTemplate);
+            string log = await Helpers.DownloadModAsync(newTreeUrl, basePath, manifest.fileUrlTemplate);
             localVersion = newTreeUrl;
             Save();
             return log;
@@ -137,37 +137,37 @@ namespace FtdModManager
         {
             try
             {
-                ModManager.Log($"Checking update for {mod.Header.ComponentId.Name}");
-                string data = await ModManager.DownloadStringAsync(modData.latestCommitUrl);
+                Helpers.Log($"Checking update for {mod.Header.ComponentId.Name}");
+                string data = await Helpers.DownloadStringAsync(manifest.latestCommitUrl);
                 var commit = JsonConvert.DeserializeObject<GHCommit>(data);
 
                 updateTitle = commit.commit.message;
                 updateMessage = "";
 
-                newTreeUrl = string.Format(modData.recursiveTreeUrlTemplate, commit.sha);
+                newTreeUrl = string.Format(manifest.recursiveTreeUrlTemplate, commit.sha);
                 return newTreeUrl != localVersion;
             }
             catch (Exception e)
             {
-                ModManager.LogException(e);
+                Helpers.LogException(e);
                 return false;
             }
         }
 
         public async Task<bool> CheckUpdateLatestRelease()
         {
-            ModManager.Log($"Checking update for {mod.Header.ComponentId.Name}");
-            string releaseData = await ModManager.DownloadStringAsync(modData.latestReleaseUrl);
+            Helpers.Log($"Checking update for {mod.Header.ComponentId.Name}");
+            string releaseData = await Helpers.DownloadStringAsync(manifest.latestReleaseUrl);
             var release = JsonConvert.DeserializeObject<GHRelease>(releaseData);
             string tagName = release.tag_name;
 
-            string tagData = await ModManager.DownloadStringAsync(string.Format(modData.tagUrlTemplate, tagName));
+            string tagData = await Helpers.DownloadStringAsync(string.Format(manifest.tagUrlTemplate, tagName));
             var tag = JsonConvert.DeserializeObject<GHTag>(tagData);
 
             updateTitle = tagName;
             updateMessage = release.body;
 
-            newTreeUrl = string.Format(modData.recursiveTreeUrlTemplate, tag.commit.sha);
+            newTreeUrl = string.Format(manifest.recursiveTreeUrlTemplate, tag.commit.sha);
             return newTreeUrl != localVersion;
         }
     }

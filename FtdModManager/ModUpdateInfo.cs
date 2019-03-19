@@ -32,7 +32,7 @@ namespace FtdModManager
         public GHTree.Item[] newFiles;
         public long downloadSize;
 
-        public readonly ModData modData;
+        public readonly ModManifest manifest;
         public readonly ModPreferences pref;
         public readonly string modName;
         public readonly string basePath;
@@ -43,9 +43,9 @@ namespace FtdModManager
 
         private string treeUrl;
 
-        public ModUpdateInfo(ModData modData, ModPreferences modPreferences)
+        public ModUpdateInfo(ModManifest modManifest, ModPreferences modPreferences)
         {
-            this.modData = modData;
+            manifest = modManifest;
             pref = modPreferences;
             modName = modPreferences.mod.Header.ComponentId.Name;
             basePath = modPreferences.mod.Header.ModDirectoryWithSlash.NormalizedDirPath();
@@ -170,7 +170,7 @@ namespace FtdModManager
             }
 
             var tasks = changedFiles.Concat(newFiles).Select(
-                x => DownloadToFileAsync(string.Format(modData.fileUrlTemplate, updateVersion, x.path), x.localPath));
+                x => DownloadToFileAsync(string.Format(manifest.fileUrlTemplate, updateVersion, x.path), x.localPath));
 
             Log($"Downloading files");
             await Task.WhenAll(tasks);
@@ -344,15 +344,15 @@ namespace FtdModManager
             }
             catch (Exception e)
             {
-                ModManager.LogException(e);
+                LogException(e);
                 isUpdateAvailable = false;
             }
         }
 
         public async Task CheckUpdateLatestCommit()
         {
-            ModManager.Log($"Checking update for {modName}");
-            string data = await ModManager.DownloadStringAsync(modData.latestCommitUrl);
+            Helpers.Log($"Checking update for {modName}");
+            string data = await DownloadStringAsync(manifest.latestCommitUrl);
             var commit = JsonConvert.DeserializeObject<GHCommit>(data);
 
             updateTitle = commit.commit.message;
@@ -360,17 +360,17 @@ namespace FtdModManager
 
             updateVersion = commit.sha;
             isUpdateAvailable = updateVersion != pref.localVersion;
-            treeUrl = string.Format(modData.recursiveTreeUrlTemplate, commit.sha);
+            treeUrl = string.Format(manifest.recursiveTreeUrlTemplate, commit.sha);
         }
 
         public async Task CheckUpdateLatestRelease()
         {
-            ModManager.Log($"Checking update for {modName}");
-            string releaseData = await ModManager.DownloadStringAsync(modData.latestReleaseUrl);
+            Helpers.Log($"Checking update for {modName}");
+            string releaseData = await DownloadStringAsync(manifest.latestReleaseUrl);
             var release = JsonConvert.DeserializeObject<GHRelease>(releaseData);
             string tagName = release.tag_name;
 
-            string tagData = await ModManager.DownloadStringAsync(string.Format(modData.tagUrlTemplate, tagName));
+            string tagData = await DownloadStringAsync(string.Format(manifest.tagUrlTemplate, tagName));
             var tag = JsonConvert.DeserializeObject<GHTag>(tagData);
 
             updateTitle = tagName;
@@ -378,7 +378,7 @@ namespace FtdModManager
 
             updateVersion = tag.commit.sha;
             isUpdateAvailable = updateVersion != pref.localVersion;
-            treeUrl = string.Format(modData.recursiveTreeUrlTemplate, tag.commit.sha);
+            treeUrl = string.Format(manifest.recursiveTreeUrlTemplate, tag.commit.sha);
         }
         
 
