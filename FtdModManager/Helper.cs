@@ -1,24 +1,13 @@
 ﻿using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using BrilliantSkies.Modding;
-using FtdModManager.GitHub;
-using GitSharp;
-using Newtonsoft.Json;
-
-#if !DEBUG
+using BrilliantSkies.Ui.TreeSelection;
 using UnityEngine;
-using UnityEngine.Networking;
-#endif
 
 namespace FtdModManager
 {
-    public static class Helpers
+    public static class Helper
     {
         public const string tempExtension = ".modmanager_temp";
 
@@ -36,6 +25,20 @@ namespace FtdModManager
                     LogException(e);
                 }
             }
+        }
+
+        public static TreeSelectorGuiElement<GeneralFile, GeneralFolder> GetFileBrowser(GeneralFolder root)
+        {
+            var treeSelector = new TreeSelectorGuiElement<GeneralFile, GeneralFolder>(
+                root,
+                x => x.FileNameWithExtension,
+                x => x.Name,
+                x => x.GetFiles(),
+                x => x.GetFolders().Cast<GeneralFolder>(),
+                x => x.Sort((a, b) => a.ModifiedTime.CompareTo(b.ModifiedTime))
+            );
+
+            return treeSelector;
         }
 
         public static void Log(string message)

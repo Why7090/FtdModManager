@@ -11,11 +11,6 @@ namespace FtdModManager
 {
     public class ModPreferences
     {
-        public enum UpdateType
-        {
-            Disabled, LatestCommit, LatestRelease
-        }
-
         [JsonIgnore]
         public ModManifest manifest;
 
@@ -79,7 +74,7 @@ namespace FtdModManager
 
         public void RemoveTempFiles()
         {
-            Helpers.RemoveTempFilesInDirectory(basePath);
+            Helper.RemoveTempFilesInDirectory(basePath);
         }
     }
 }

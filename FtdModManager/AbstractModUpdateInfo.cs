@@ -5,17 +5,13 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using BrilliantSkies.Ui.Special.PopUps;
-using BrilliantSkies.Ui.Tips;
 using FtdModManager.GitHub;
 using GitSharp;
 using Newtonsoft.Json;
-using UnityEngine;
-using UnityEngine.Networking;
 
 namespace FtdModManager
 {
-    public class ModUpdateInfo
+    public abstract class AbstractModUpdateInfo
     {
         public bool isUpdateAvailable = false;
 
@@ -33,25 +29,32 @@ namespace FtdModManager
         public long downloadSize;
 
         public readonly ModManifest manifest;
-        public readonly ModPreferences pref;
+        public readonly UpdateType updateType;
         public readonly string modName;
         public readonly string basePath;
+        public readonly string localVersion;
+
+        // should return "connected"
+        public string connectionCheckUrl = "https://gist.githubusercontent.com/Why7090/9f67ee70a3bba136785fe4d2bece6363/raw/check.txt";
 
         public const string tempExtension = ".modmanager_temp";
-        // should return "connected"
-        public const string connectionCheckUrl = "https://gist.githubusercontent.com/Why7090/9f67ee70a3bba136785fe4d2bece6363/raw/check.txt";
 
-        private string treeUrl;
+        protected string treeUrl;
 
-        public ModUpdateInfo(ModManifest modManifest, ModPreferences modPreferences)
+
+        protected AbstractModUpdateInfo(ModManifest manifest, string modName, string basePath, UpdateType updateType, string localVersion)
         {
-            manifest = modManifest;
-            pref = modPreferences;
-            modName = modPreferences.mod.Header.ComponentId.Name;
-            basePath = modPreferences.mod.Header.ModDirectoryWithSlash.NormalizedDirPath();
+            this.manifest = manifest;
+            this.updateType = updateType;
+            this.modName = modName;
+            this.basePath = modName;
+            this.localVersion = localVersion;
         }
 
-        public async Task CheckAndPrepareUpdate()
+
+        #region Virtual Methods
+
+        public virtual async Task CheckAndPrepareUpdate()
         {
             if (!await CheckInternetConnection())
             {
@@ -82,7 +85,7 @@ namespace FtdModManager
             }
         }
 
-        public async Task PrepareUpdate()
+        public virtual async Task PrepareUpdate()
         {
             string[] files = { };
             string[] folders = { };
@@ -139,7 +142,7 @@ namespace FtdModManager
             downloadSize = filesToDownload.Sum(x => (long)x.size);
         }
 
-        public async Task ApplyUpdate()
+        public virtual async Task ApplyUpdate()
         {
             foreach (string file in removedFiles.Concat(changedFiles.Select(x => x.localPath)))
             {
@@ -199,38 +202,7 @@ namespace FtdModManager
             }
         }
 
-        public void ConfirmUpdate(Task task = null)
-        {
-            Log("Mod Update Available");
-            if (isUpdateAvailable)
-            {
-                GuiPopUp.Instance.Add(
-                    new PopupMultiButton(
-                        GetConfirmationTitle(),
-                        GetConfirmationMessage(),
-                        false
-                    )
-                    .AddButton("<b>Update now</b>", x => ApplyUpdate().ContinueWith(AlertUpdateCompletion))
-                    .AddButton("Remind me next time", toolTip: new ToolTip("Cancel update"))
-                    .AddButton("Copy to clipboard", x => GUIUtility.systemCopyBuffer = x.message, false)
-                );
-            }
-        }
-
-        public void AlertUpdateCompletion(Task task = null)
-        {
-            GuiPopUp.Instance.Add(
-                new PopupMultiButton(
-                    GetFinishTitle(),
-                    GetFinishMessage(),
-                    false
-                )
-                .AddButton("Continue")
-                .AddButton("Copy to clipboard", x => GUIUtility.systemCopyBuffer = x.message, false)
-            );
-        }
-
-        public string GetConfirmationTitle()
+        public virtual string GetConfirmationTitle()
         {
             if (!isUpdateAvailable)
                 return $"No update available for {modName}";
@@ -238,7 +210,7 @@ namespace FtdModManager
             return $"Update found for : {modName}";
         }
 
-        public string GetConfirmationMessage()
+        public virtual string GetConfirmationMessage()
         {
             if (!isUpdateAvailable)
                 return "";
@@ -309,7 +281,7 @@ namespace FtdModManager
             return str.ToString();
         }
 
-        public string GetFinishTitle()
+        public virtual string GetFinishTitle()
         {
             if (exceptions.Count > 0)
                 return $"Update completed with error : {modName}";
@@ -317,7 +289,7 @@ namespace FtdModManager
             return $"Update successful : {modName}";
         }
 
-        public string GetFinishMessage()
+        public virtual string GetFinishMessage()
         {
             if (exceptions.Count > 0)
                 return string.Join("\n\n", "Exceptions :\n", exceptions.Select(x => x.ToString()));
@@ -325,16 +297,16 @@ namespace FtdModManager
             return "";
         }
 
-        public async Task CheckUpdate()
+        public virtual async Task CheckUpdate()
         {
             try
             {
-                switch (pref.updateType)
+                switch (updateType)
                 {
-                    case ModPreferences.UpdateType.LatestCommit:
+                    case UpdateType.LatestCommit:
                         await CheckUpdateLatestCommit();
                         break;
-                    case ModPreferences.UpdateType.LatestRelease:
+                    case UpdateType.LatestRelease:
                         await CheckUpdateLatestRelease();
                         break;
                     default:
@@ -349,9 +321,9 @@ namespace FtdModManager
             }
         }
 
-        public async Task CheckUpdateLatestCommit()
+        public virtual async Task CheckUpdateLatestCommit()
         {
-            Helpers.Log($"Checking update for {modName}");
+            Helper.Log($"Checking update for {modName}");
             string data = await DownloadStringAsync(manifest.latestCommitUrl);
             var commit = JsonConvert.DeserializeObject<GHCommit>(data);
 
@@ -359,13 +331,13 @@ namespace FtdModManager
             updateMessage = "";
 
             updateVersion = commit.sha;
-            isUpdateAvailable = updateVersion != pref.localVersion;
+            isUpdateAvailable = updateVersion != localVersion;
             treeUrl = string.Format(manifest.recursiveTreeUrlTemplate, commit.sha);
         }
 
-        public async Task CheckUpdateLatestRelease()
+        public virtual async Task CheckUpdateLatestRelease()
         {
-            Helpers.Log($"Checking update for {modName}");
+            Helper.Log($"Checking update for {modName}");
             string releaseData = await DownloadStringAsync(manifest.latestReleaseUrl);
             var release = JsonConvert.DeserializeObject<GHRelease>(releaseData);
             string tagName = release.tag_name;
@@ -377,10 +349,33 @@ namespace FtdModManager
             updateMessage = release.body;
 
             updateVersion = tag.commit.sha;
-            isUpdateAvailable = updateVersion != pref.localVersion;
+            isUpdateAvailable = updateVersion != localVersion;
             treeUrl = string.Format(manifest.recursiveTreeUrlTemplate, tag.commit.sha);
         }
-        
+
+        public virtual async Task<bool> CheckInternetConnection()
+        {
+            var stopWatch = new System.Diagnostics.Stopwatch();
+            stopWatch.Start();
+            string check;
+            try
+            {
+                check = await DownloadStringAsync(connectionCheckUrl);
+            }
+            catch (Exception e)
+            {
+                LogException(e);
+                check = "";
+            }
+            stopWatch.Stop();
+            Log($"Time took to download check.txt : {stopWatch.ElapsedMilliseconds} ms");
+            return check == "connected";
+        }
+
+        #endregion Virtual Methods
+
+
+        #region Static Methods
 
         public static bool CompareSHA(string path, string hash)
         {
@@ -409,57 +404,6 @@ namespace FtdModManager
                 }
             }
             return true;
-        }
-
-        public static async Task<bool> CheckInternetConnection()
-        {
-            var stopWatch = new System.Diagnostics.Stopwatch();
-            stopWatch.Start();
-            string check;
-            try
-            {
-                check = await DownloadStringAsync(connectionCheckUrl);
-            }
-            catch (Exception e)
-            {
-                LogException(e);
-                check = "";
-            }
-            stopWatch.Stop();
-            Log($"Time took to download check.txt : {stopWatch.ElapsedMilliseconds} ms");
-            return check == "connected";
-        }
-
-        public static async Task DownloadToFileAsync(string url, string path)
-        {
-            var www = UnityWebRequest.Get(url);
-            www.downloadHandler = new DownloadHandlerFile(path);
-            await www.SendWebRequest();
-        }
-
-        public static async Task<string> DownloadStringAsync(string url)
-        {
-            var www = UnityWebRequest.Get(url);
-            await www.SendWebRequest();
-            return www.downloadHandler.text;
-        }
-
-        public static void Log(string message)
-        {
-#if (DEBUG)
-            Console.WriteLine("[ModManager] " + message);
-#else
-            Debug.Log("[ModManager] " + message);
-#endif
-        }
-
-        public static void LogException(Exception e)
-        {
-#if (DEBUG)
-            Console.WriteLine(e.ToString());
-#else
-            Debug.LogException(e);
-#endif
         }
 
         /// <summary>
@@ -513,11 +457,25 @@ namespace FtdModManager
             return readable.ToString("0.### ") + suffix;
         }
 
-
-        internal static IEnumerable<GHTree.Item> IntersectBlobsWithFiles(IEnumerable<GHTree.Item> items, IEnumerable<string> files)
+        public static IEnumerable<GHTree.Item> IntersectBlobsWithFiles(IEnumerable<GHTree.Item> items, IEnumerable<string> files)
         {
             var comparer = new SamePath();
             return items.Where(x => files.Contains(x.localPath, comparer));
         }
+
+        #endregion Static Methods
+
+
+        #region Abstract Methods
+
+        public abstract Task DownloadToFileAsync(string url, string path);
+
+        public abstract Task<string> DownloadStringAsync(string url);
+
+        public abstract void Log(string message);
+
+        public abstract void LogException(Exception e);
+
+        #endregion Abstract Methods
     }
 }

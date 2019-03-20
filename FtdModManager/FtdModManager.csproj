@@ -102,22 +102,27 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GeneralFile.cs" />
+    <Compile Include="GeneralFolder.cs" />
     <Compile Include="GitHub\GHCommit.cs" />
     <Compile Include="GitHub\GHObjectWithLink.cs" />
     <Compile Include="GitHub\GHRelease.cs" />
     <Compile Include="GitHub\GHTag.cs" />
     <Compile Include="GitHub\GHTree.cs" />
-    <Compile Include="ModUpdateInfo.cs" />
+    <Compile Include="AbstractModUpdateInfo.cs" />
     <Compile Include="PopupMultiButton.cs" />
-    <Compile Include="Test.cs" />
     <Compile Include="ModPreferences.cs" />
     <Compile Include="ModManifest.cs" />
     <Compile Include="ModManagerPlugin.cs" />
-    <Compile Include="Helpers.cs" />
+    <Compile Include="Helper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Comparers.cs" />
     <Compile Include="ThirdParty\IgnoreRules.cs" />
     <Compile Include="ThirdParty\UnityWebRequestAwaiter.cs" />
+    <Compile Include="UpdateType.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="FtdModUpdateInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
