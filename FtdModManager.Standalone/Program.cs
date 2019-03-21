@@ -90,8 +90,13 @@ namespace FtdModManager.Standalone
             Helper.Log(updateInfo.GetConfirmationTitle());
             Helper.Log("===================================");
 
-            if (!(auto || Confirm("Do you want to install this mod? [Y/n]", true)))
+            if (!updateInfo.isUpdateAvailable)
                 return;
+
+            if (!(auto || Confirm("Do you want to install this mod? [Y/n] : ", true)))
+                return;
+
+            Console.WriteLine();
 
             await updateInfo.ApplyUpdate();
 

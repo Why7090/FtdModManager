@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace FtdModManager.Standalone
@@ -15,14 +16,32 @@ namespace FtdModManager.Standalone
         {
         }
         
-        public override Task<string> DownloadStringAsync(string url)
+        public override async Task<string> DownloadStringAsync(string url)
         {
-            return Helper.DownloadStringAsync(url);
+            try
+            {
+                return await Helper.DownloadStringAsync(url);
+            }
+            catch (Exception e)
+            {
+                Log(url);
+                LogException(e);
+                return "";
+            }
         }
 
-        public override Task DownloadToFileAsync(string url, string path)
+        public override async Task DownloadToFileAsync(string url, string path)
         {
-            return Helper.DownloadToFileAsync(url, path);
+            try
+            {
+                await Helper.DownloadToFileAsync(url, path);
+            }
+            catch (Exception e)
+            {
+                Log(url);
+                LogException(e);
+                return;
+            }
         }
 
         public override void Log(string message)
