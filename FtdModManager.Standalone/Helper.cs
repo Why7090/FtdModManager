@@ -39,5 +39,10 @@ namespace FtdModManager.Standalone
         {
             Console.WriteLine(e.ToString());
         }
+
+        public static void LogSeparator()
+        {
+            Log("=============================================");
+        }
     }
 }

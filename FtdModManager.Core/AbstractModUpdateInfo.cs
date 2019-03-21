@@ -55,7 +55,7 @@ namespace FtdModManager
         {
             this.basePath = basePath;
             manifest = JsonConvert.DeserializeObject<ModManifest>(File.ReadAllText(Path.Combine(this.basePath, ModPreferences.manifestFileName)));
-            modName = Path.GetDirectoryName(basePath);
+            modName = new DirectoryInfo(basePath).Name;
             
             var pref = new ModPreferences(modName, this.basePath);
             localVersion = pref.localVersion;

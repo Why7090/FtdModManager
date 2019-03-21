@@ -30,7 +30,7 @@ namespace FtdModManager.Standalone
         {
             if (args.Count == 0) // self-update
             {
-                string installPath = Path.Combine(modParentPath, "FtdModManager");
+                string installPath = Path.Combine(modParentPath, "FtdModManager").NormalizedDirPath();
 
                 InstallMod(ownManifestUri, installPath);
 
@@ -56,6 +56,14 @@ namespace FtdModManager.Standalone
             if (args.Exists("install"))
             {
                 InstallMod(args.Single("install"), args.Single("name"));
+            }
+
+            if (args.Exists("update-all"))
+            {
+                foreach(string file in Directory.GetFiles(modParentPath, ModPreferences.manifestFileName, SearchOption.AllDirectories))
+                {
+                    UpdateMod(Path.GetDirectoryName(file));
+                }
             }
         }
 
@@ -85,11 +93,13 @@ namespace FtdModManager.Standalone
             var updateInfo = new StandaloneModUpdateInfo(basePath);
             await updateInfo.CheckAndPrepareUpdate();
 
-            Helper.Log("===================================");
+            Helper.Log("\n");
+            Helper.LogSeparator();
             Helper.Log(updateInfo.GetConfirmationMessage());
-            Helper.Log("===================================");
+            Helper.LogSeparator();
             Helper.Log(updateInfo.GetConfirmationTitle());
-            Helper.Log("===================================");
+            Helper.LogSeparator();
+            Helper.Log("\n");
 
             if (!updateInfo.isUpdateAvailable)
                 return;
@@ -101,11 +111,13 @@ namespace FtdModManager.Standalone
 
             await updateInfo.ApplyUpdate();
 
-            Helper.Log("===================================");
+            Helper.Log("\n");
+            Helper.LogSeparator();
             Helper.Log(updateInfo.GetFinishMessage());
-            Helper.Log("===================================");
+            Helper.LogSeparator();
             Helper.Log(updateInfo.GetFinishTitle());
-            Helper.Log("===================================");
+            Helper.LogSeparator();
+            Helper.Log("\n");
         }
 
         static void PrintHelp()
