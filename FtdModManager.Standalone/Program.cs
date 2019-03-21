@@ -30,10 +30,11 @@ namespace FtdModManager.Standalone
         {
             if (args.Count == 0) // self-update
             {
-                string modDir = AppDomain.CurrentDomain.BaseDirectory;
+                string installPath = Path.Combine(modParentPath, "FtdModManager");
 
-                InstallMod(ownManifestUri, modDir);
+                InstallMod(ownManifestUri, installPath);
 
+                Console.WriteLine("FtdModManager successfully installed to " + installPath);
                 Console.Write("Press any key to exit: ");
                 Console.ReadKey();
                 return;
