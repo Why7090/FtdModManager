@@ -20,9 +20,9 @@ namespace FtdModManager
                 if (mod.Header.Core)
                     continue;
 
-                var pref = ModPreferences.FromMod(mod);
+                var pref = new ModPreferences(mod.Header.ComponentId.Name, mod.Header.ModDirectoryWithSlash);
                 mods.Add(pref);
-                pref.RemoveTempFiles();
+                Helper.RemoveTempFilesInDirectory(pref.basePath);
 
                 var updateInfo = new FtdModUpdateInfo(pref.manifest, pref);
                 updateInfo.CheckAndPrepareUpdate().ContinueWith(updateInfo.ConfirmUpdate);

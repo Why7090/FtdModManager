@@ -51,6 +51,17 @@ namespace FtdModManager
             this.localVersion = localVersion;
         }
 
+        protected AbstractModUpdateInfo(string basePath)
+        {
+            this.basePath = basePath;
+            manifest = JsonConvert.DeserializeObject<ModManifest>(File.ReadAllText(Path.Combine(this.basePath, ModPreferences.manifestFileName)));
+            modName = Path.GetDirectoryName(basePath);
+            
+            var pref = new ModPreferences(modName, this.basePath);
+            localVersion = pref.localVersion;
+            updateType = pref.updateType;
+        }
+
 
         #region Virtual Methods
 
@@ -323,7 +334,7 @@ namespace FtdModManager
 
         public virtual async Task CheckUpdateLatestCommit()
         {
-            Helper.Log($"Checking update for {modName}");
+            Log($"Checking update for {modName}");
             string data = await DownloadStringAsync(manifest.latestCommitUrl);
             var commit = JsonConvert.DeserializeObject<GHCommit>(data);
 
@@ -337,7 +348,7 @@ namespace FtdModManager
 
         public virtual async Task CheckUpdateLatestRelease()
         {
-            Helper.Log($"Checking update for {modName}");
+            Log($"Checking update for {modName}");
             string releaseData = await DownloadStringAsync(manifest.latestReleaseUrl);
             var release = JsonConvert.DeserializeObject<GHRelease>(releaseData);
             string tagName = release.tag_name;

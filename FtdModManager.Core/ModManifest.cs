@@ -13,14 +13,14 @@ namespace FtdModManager
         public bool useCustomUpdate;
 
         [JsonConverter(typeof(StringEnumConverter))]
-        public ModPreferences.UpdateType defaultUpdateType;
+        public UpdateType defaultUpdateType;
 
         public ModManifest() { }
 
         public ModManifest(
             string latestCommitUrl, string latestReleaseUrl,
             string tagUrlTemplate, string recursiveTreeUrlTemplate, string fileUrlTemplate,
-            ModPreferences.UpdateType defaultUpdateType)
+            UpdateType defaultUpdateType)
         {
             this.latestCommitUrl = latestCommitUrl;
             this.latestReleaseUrl = latestReleaseUrl;
@@ -30,7 +30,7 @@ namespace FtdModManager
             this.defaultUpdateType = defaultUpdateType;
         }
 
-        public static ModManifest FromGithubRepo (string user, string repo, string branch, ModPreferences.UpdateType defaultUpdateType)
+        public static ModManifest FromGithubRepo (string user, string repo, string branch, UpdateType defaultUpdateType)
         {
             return new ModManifest(
                 $"https://api.github.com/repos/{user}/{repo}/commits/{branch}",

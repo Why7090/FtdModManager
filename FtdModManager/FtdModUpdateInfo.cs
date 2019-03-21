@@ -11,8 +11,8 @@ namespace FtdModManager
     {
         public FtdModUpdateInfo(ModManifest modManifest, ModPreferences modPreferences) : base(
             modManifest,
-            modPreferences.mod.Header.ComponentId.Name,
-            modPreferences.mod.Header.ModDirectoryWithSlash.NormalizedDirPath(),
+            modPreferences.modName,
+            modPreferences.basePath.NormalizedDirPath(),
             modPreferences.updateType,
             modPreferences.localVersion
         )

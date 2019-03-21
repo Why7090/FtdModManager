@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -29,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>
@@ -55,9 +57,9 @@
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\From The Depths\From_The_Depths_Data\Managed\Modding.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\From The Depths\From_The_Depths_Data\Managed\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="PlayerProfiles">
@@ -104,25 +106,23 @@
   <ItemGroup>
     <Compile Include="GeneralFile.cs" />
     <Compile Include="GeneralFolder.cs" />
-    <Compile Include="GitHub\GHCommit.cs" />
-    <Compile Include="GitHub\GHObjectWithLink.cs" />
-    <Compile Include="GitHub\GHRelease.cs" />
-    <Compile Include="GitHub\GHTag.cs" />
-    <Compile Include="GitHub\GHTree.cs" />
-    <Compile Include="AbstractModUpdateInfo.cs" />
     <Compile Include="PopupMultiButton.cs" />
-    <Compile Include="ModPreferences.cs" />
-    <Compile Include="ModManifest.cs" />
     <Compile Include="ModManagerPlugin.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Comparers.cs" />
-    <Compile Include="ThirdParty\IgnoreRules.cs" />
     <Compile Include="ThirdParty\UnityWebRequestAwaiter.cs" />
-    <Compile Include="UpdateType.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FtdModUpdateInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FtdModManager.Core\FtdModManager.Core.csproj">
+      <Project>{60cd5746-8df7-40bf-a9b9-81301b219a60}</Project>
+      <Name>FtdModManager.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

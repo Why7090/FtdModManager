@@ -30,7 +30,7 @@ namespace FtdModManager
 
         protected override void AddContentToWindow(ConsoleWindow window)
         {
-            FtdModUpdateInfo.Log("AddContentToWindow");
+            Helper.Log("AddContentToWindow");
             var screenSegmentStandard = window.Screen.CreateStandardSegment(InsertPosition.OnCursor);
             screenSegmentStandard.AddInterpretter(new SubjectiveDisplay<PopMultiButton>(_focus, M.m((PopMultiButton I) => message), null)
             {
