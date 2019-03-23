@@ -130,7 +130,7 @@ namespace FtdModManager.Standalone
             if (!updateInfo.isUpdateAvailable)
                 return;
 
-            if (Confirm("Do you want to install this mod? [Y/n] : ", true))
+            if (!Confirm("Do you want to install this mod? [Y/n] : ", true))
                 return;
 
             await updateInfo.ApplyUpdate();
