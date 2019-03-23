@@ -171,12 +171,12 @@ namespace FtdModManager
                     try
                     {
                         File.Delete(file);
-                        Log($"Deleted file: {file}");
+                        Log($"Deleted file: {file.PathRelativeTo(basePath)}");
                     }
                     catch (UnauthorizedAccessException)
                     {
                         File.Move(file, file + tempExtension);
-                        Log($"Renamed locked file: {file}");
+                        Log($"Renamed locked file: {file.PathRelativeTo(basePath)}");
                     }
                 }
                 catch (Exception e)
@@ -189,7 +189,7 @@ namespace FtdModManager
             foreach (string dir in newDirectories)
             {
                 Directory.CreateDirectory(dir);
-                Log($"Created directory {dir}");
+                Log($"Created directory {dir.PathRelativeTo(basePath)}");
             }
 
             Log($"Downloading files");
@@ -210,7 +210,7 @@ namespace FtdModManager
                 try
                 {
                     Directory.Delete(dir, true);
-                    Log($"Deleted directory: {dir}");
+                    Log($"Deleted directory: {dir.PathRelativeTo(basePath)}");
                 }
                 catch (Exception e)
                 {

@@ -13,7 +13,7 @@ namespace FtdModManager.Standalone
         const string modRelativePath = "From The Depths/Mods";
         const string ownManifestUri = "https://raw.githubusercontent.com/Why7090/FtdModManager/master/modmanifest.json";
 
-        static string modParentPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), modRelativePath);
+        static string modParentPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), modRelativePath).NormalizedDirPath();
         static Args args;
 
         static bool auto = false;
@@ -62,12 +62,12 @@ namespace FtdModManager.Standalone
                 auto = true;
 
             if (args.TryGetOption("--parent", out string value))
-                modParentPath = value;
+                modParentPath = value.NormalizedDirPath();
             Directory.SetCurrentDirectory(modParentPath);
 
             if (cmd == "install")
             {
-                InstallMod(param[0], Path.GetFullPath(param[1]));
+                InstallMod(param[0], Path.GetFullPath(param[1]).NormalizedDirPath());
             }
 
             if (cmd == "update")
@@ -82,7 +82,7 @@ namespace FtdModManager.Standalone
                 else
                 {
                     UpdateMod(Path.GetDirectoryName(Directory.GetFiles(
-                        Path.GetFullPath(param[0]),
+                        Path.GetFullPath(param[0]).NormalizedDirPath(),
                         ModPreferences.manifestFileName,
                         SearchOption.AllDirectories).First()));
                 }
