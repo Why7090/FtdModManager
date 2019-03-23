@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+﻿using PetaJson;
 
 namespace FtdModManager
 {
+    [Json]
     public class ModManifest
     {
         public string latestCommitUrl;          // github: https://api.github.com/repos/<user>/<repo>/commits/<branch>
@@ -10,9 +10,7 @@ namespace FtdModManager
         public string tagUrlTemplate;           // github: https://api.github.com/repos/<user>/<repo>/git/refs/tags/{0}
         public string recursiveTreeUrlTemplate; // github: https://api.github.com/repos/<user>/<repo>/git/trees/{0}?recursive=1
         public string fileUrlTemplate;          // github: https://raw.githubusercontent.com/<user>/<repo>/{0}/{1}
-        public bool useCustomUpdate;
-
-        [JsonConverter(typeof(StringEnumConverter))]
+        
         public UpdateType defaultUpdateType;
 
         public ModManifest() { }

@@ -1,8 +1,8 @@
-{
-  "latestCommitUrl":          "https://api.github.com/repos/why7090/ftdmodmanager/commits/master",
-  "latestReleaseUrl":         "https://api.github.com/repos/why7090/ftdmodmanager/releases/latest",
-  "tagUrlTemplate":           "https://api.github.com/repos/why7090/ftdmodmanager/git/refs/tags/{0}",
-  "recursiveTreeUrlTemplate": "https://api.github.com/repos/why7090/ftdmodmanager/git/trees/{0}?recursive=1",
-  "fileUrlTemplate":     "https://raw.githubusercontent.com/why7090/ftdmodmanager/{0}/{1}",
-  "defaultUpdateType": "LatestRelease"
+{                                                                                                             /* Comments are allowed in all JSON files of FtdModManager */
+  "latestCommitUrl":          "https://api.github.com/repos/why7090/ftdmodmanager/commits/master",            // https://developer.github.com/v3/repos/commits/#get-a-single-commit
+  "latestReleaseUrl":         "https://api.github.com/repos/why7090/ftdmodmanager/releases/latest",           // https://developer.github.com/v3/repos/releases/#get-the-latest-release
+  "tagUrlTemplate":           "https://api.github.com/repos/why7090/ftdmodmanager/git/refs/tags/{0}",         // https://developer.github.com/v3/git/tags/#get-a-tag
+  "recursiveTreeUrlTemplate": "https://api.github.com/repos/why7090/ftdmodmanager/git/trees/{0}?recursive=1", // https://developer.github.com/v3/git/trees/#get-a-tree-recursively
+  "fileUrlTemplate":     "https://raw.githubusercontent.com/why7090/ftdmodmanager/{0}/{1}",                   // {0} is commit sha and {1} is file path
+  "defaultUpdateType": "LatestRelease"                                                                        // Update channel, "Disabled" or "LatestRelease" or "LatestCommit"
 }

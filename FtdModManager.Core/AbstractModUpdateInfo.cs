@@ -4,10 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using FtdModManager.GitHub;
 using GitSharp;
-using Newtonsoft.Json;
+using PetaJson;
 
 namespace FtdModManager
 {
@@ -24,8 +24,8 @@ namespace FtdModManager
         public string[] removedDirectories;
         public string[] newDirectories;
 
-        public GHTree.Item[] changedFiles;
-        public GHTree.Item[] newFiles;
+        public GHTreeItem[] changedFiles;
+        public GHTreeItem[] newFiles;
         public long downloadSize;
 
         public readonly ModManifest manifest;
@@ -54,7 +54,7 @@ namespace FtdModManager
         protected AbstractModUpdateInfo(string basePath)
         {
             this.basePath = basePath;
-            manifest = JsonConvert.DeserializeObject<ModManifest>(File.ReadAllText(Path.Combine(this.basePath, ModPreferences.manifestFileName)));
+            manifest = Json.ParseFile<ModManifest>(Path.Combine(this.basePath, ModPreferences.manifestFileName));
             modName = new DirectoryInfo(basePath).Name;
             
             var pref = new ModPreferences(modName, this.basePath);
@@ -133,14 +133,14 @@ namespace FtdModManager
             }
             Log("Downloaded tree JSON");
 
-            var tree = JsonConvert.DeserializeObject<GHTree>(data).tree;
+            var tree = Json.Parse<GHTree>(data).tree;
             foreach (var item in tree)
             {
-                item.localPath = Path.Combine(basePath, item.path).NormalizedPath(item.type == GHTree.ItemType.blob);
+                item.localPath = Path.Combine(basePath, item.path).NormalizedPath(item.type == GHTreeItemType.blob);
             }
 
-            string[] remoteDirectories = tree.Where(x => x.type == GHTree.ItemType.tree).Select(x => x.localPath).ToArray();
-            var remoteFiles = tree.Where(x => x.type == GHTree.ItemType.blob).ToArray();
+            string[] remoteDirectories = tree.Where(x => x.type == GHTreeItemType.tree).Select(x => x.localPath).ToArray();
+            var remoteFiles = tree.Where(x => x.type == GHTreeItemType.blob).ToArray();
             var filesToDownload = remoteFiles.Where(x => !CompareSHA(x.localPath, x.sha)).ToArray();
 
             changedFiles = IntersectBlobsWithFiles(filesToDownload, files).ToArray();
@@ -151,6 +151,15 @@ namespace FtdModManager
             newDirectories = remoteDirectories.Except(folders, new SamePath()).ToArray();
 
             downloadSize = filesToDownload.Sum(x => (long)x.size);
+
+            if (   newDirectories.Length == 0
+                && removedDirectories.Length == 0
+                && changedFiles.Length == 0
+                && newFiles.Length == 0
+                && removedFiles.Length == 0)
+            {
+                isUpdateAvailable = false;
+            }
         }
 
         public virtual async Task ApplyUpdate()
@@ -183,11 +192,9 @@ namespace FtdModManager
                 Log($"Created directory {dir}");
             }
 
-            var tasks = changedFiles.Concat(newFiles).Select(
-                x => DownloadToFileAsync(string.Format(manifest.fileUrlTemplate, updateVersion, x.path), x.localPath));
-
             Log($"Downloading files");
-            await Task.WhenAll(tasks);
+            var tasks = await DownloadFiles(changedFiles.Concat(newFiles));
+
             var errors = tasks.Where(x => x.IsFaulted).Select(x => x.Exception);
             bool completedWithError = false;
             foreach (var e in errors)
@@ -336,7 +343,7 @@ namespace FtdModManager
         {
             Log($"Checking update for {modName}");
             string data = await DownloadStringAsync(manifest.latestCommitUrl);
-            var commit = JsonConvert.DeserializeObject<GHCommit>(data);
+            var commit = Json.Parse<GHCommit>(data);
 
             updateTitle = commit.commit.message;
             updateMessage = "";
@@ -350,11 +357,11 @@ namespace FtdModManager
         {
             Log($"Checking update for {modName}");
             string releaseData = await DownloadStringAsync(manifest.latestReleaseUrl);
-            var release = JsonConvert.DeserializeObject<GHRelease>(releaseData);
+            var release = Json.Parse<GHRelease>(releaseData);
             string tagName = release.tag_name;
 
             string tagData = await DownloadStringAsync(string.Format(manifest.tagUrlTemplate, tagName));
-            var tag = JsonConvert.DeserializeObject<GHTag>(tagData);
+            var tag = Json.Parse<GHTag>(tagData);
 
             updateTitle = tagName;
             updateMessage = release.body;
@@ -362,6 +369,32 @@ namespace FtdModManager
             updateVersion = tag.commit.sha;
             isUpdateAvailable = updateVersion != localVersion;
             treeUrl = string.Format(manifest.recursiveTreeUrlTemplate, tag.commit.sha);
+        }
+
+        public virtual async Task<IEnumerable<Task>> DownloadFiles(IEnumerable<GHTreeItem> files)
+        {
+            var tasks = new List<Task>();
+            var throttler = new SemaphoreSlim(16);
+
+            foreach(var file in files)
+            {
+                // do an async wait until we can schedule again
+                await throttler.WaitAsync();
+
+                tasks.Add(Task.Run(async () =>
+                {
+                    try
+                    {
+                        await DownloadToFileAsync(string.Format(manifest.fileUrlTemplate, updateVersion, file.path), file.localPath);
+                    }
+                    finally
+                    {
+                        throttler.Release();
+                    }
+                }));
+            }
+            await Task.WhenAll(tasks);
+            return tasks;
         }
 
         public virtual async Task<bool> CheckInternetConnection()
@@ -468,7 +501,7 @@ namespace FtdModManager
             return readable.ToString("0.### ") + suffix;
         }
 
-        public static IEnumerable<GHTree.Item> IntersectBlobsWithFiles(IEnumerable<GHTree.Item> items, IEnumerable<string> files)
+        public static IEnumerable<GHTreeItem> IntersectBlobsWithFiles(IEnumerable<GHTreeItem> items, IEnumerable<string> files)
         {
             var comparer = new SamePath();
             return items.Where(x => files.Contains(x.localPath, comparer));

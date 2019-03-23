@@ -9,7 +9,7 @@ namespace FtdModManager
     {
         public string name => "FtdModManager";
 
-        public Version version => new Version("0.1.0");
+        public Version version => new Version("0.3.0");
 
         public readonly List<ModPreferences> mods = new List<ModPreferences>();
 

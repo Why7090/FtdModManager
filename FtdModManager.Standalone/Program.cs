@@ -5,7 +5,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace FtdModManager.Standalone
 {
@@ -15,20 +14,32 @@ namespace FtdModManager.Standalone
         const string ownManifestUri = "https://raw.githubusercontent.com/Why7090/FtdModManager/master/modmanifest.json";
 
         static string modParentPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), modRelativePath);
-        static Arguments args;
+        static Args args;
 
         static bool auto = false;
 
         static void Main(string[] arguments)
         {
-            args = new Arguments(arguments);
+            args = new Args();
+
+            args.AddCommand("help",    0, "-help", "--help", "/help", "-h", "/h", "h", "-?", "/?", "?");
+            args.AddCommand("install", 2, "i");
+            args.AddCommand("update",  1, "u", "upgrade");
+            args.AddCommand("remove",  1, "r", "d", "delete", "u", "uninstall");
+            args.AddCommand("list",    0, "l");
+            args.AddCommand("setup",   0, "s", "self-update");
+
+            args.AddOption("--parent",     false, "-p");
+            args.AddOption("--accept-all", true,  "-y", "--yes");
+
+            args.Parse(arguments);
 
             Run();
         }
 
         static void Run()
         {
-            if (args.Count == 0) // self-update
+            if (!args.TryGetCommand(out string cmd) || cmd == "setup") // self-update
             {
                 string installPath = Path.Combine(modParentPath, "FtdModManager").NormalizedDirPath();
 
@@ -40,29 +51,40 @@ namespace FtdModManager.Standalone
                 return;
             }
 
-            if (args.IsTrue("help") || args.IsTrue("h"))
+            if (cmd == "help")
             {
                 PrintHelp();
                 return;
             }
 
-            if (args.IsTrue("y"))
+            string[] param = args.GetCommandParameters();
+            if (args.IsTrue("--accept-all"))
                 auto = true;
 
-            if (args.Exists("parent"))
-                modParentPath = args.Single("parent");
+            if (args.TryGetOption("--parent", out string value))
+                modParentPath = value;
             Directory.SetCurrentDirectory(modParentPath);
 
-            if (args.Exists("install"))
+            if (cmd == "install")
             {
-                InstallMod(args.Single("install"), args.Single("name"));
+                InstallMod(param[0], Path.GetFullPath(param[1]));
             }
 
-            if (args.Exists("update-all"))
+            if (cmd == "update")
             {
-                foreach(string file in Directory.GetFiles(modParentPath, ModPreferences.manifestFileName, SearchOption.AllDirectories))
+                if (param[0] == "all")
                 {
-                    UpdateMod(Path.GetDirectoryName(file));
+                    foreach (string file in Directory.GetFiles(modParentPath, ModPreferences.manifestFileName, SearchOption.AllDirectories))
+                    {
+                        UpdateMod(Path.GetDirectoryName(file));
+                    }
+                }
+                else
+                {
+                    UpdateMod(Path.GetDirectoryName(Directory.GetFiles(
+                        Path.GetFullPath(param[0]),
+                        ModPreferences.manifestFileName,
+                        SearchOption.AllDirectories).First()));
                 }
             }
         }
@@ -74,6 +96,7 @@ namespace FtdModManager.Standalone
 
         static async Task InstallModAsync(string manifestUri, string installFolder)
         {
+            Directory.CreateDirectory(installFolder);
             if (!File.Exists(Path.Combine(installFolder, ModPreferences.manifestFileName)))
             {
                 Helper.Log("Downloading manifest...");
@@ -92,10 +115,13 @@ namespace FtdModManager.Standalone
         {
             var updateInfo = new StandaloneModUpdateInfo(basePath);
             await updateInfo.CheckAndPrepareUpdate();
-
+            
             Helper.Log("\n");
-            Helper.LogSeparator();
-            Helper.Log(updateInfo.GetConfirmationMessage());
+            if (updateInfo.isUpdateAvailable)
+            {
+                Helper.LogSeparator();
+                Helper.Log(updateInfo.GetConfirmationMessage());
+            }
             Helper.LogSeparator();
             Helper.Log(updateInfo.GetConfirmationTitle());
             Helper.LogSeparator();
@@ -104,16 +130,18 @@ namespace FtdModManager.Standalone
             if (!updateInfo.isUpdateAvailable)
                 return;
 
-            if (!(auto || Confirm("Do you want to install this mod? [Y/n] : ", true)))
+            if (Confirm("Do you want to install this mod? [Y/n] : ", true))
                 return;
-
-            Console.WriteLine();
 
             await updateInfo.ApplyUpdate();
 
             Helper.Log("\n");
-            Helper.LogSeparator();
-            Helper.Log(updateInfo.GetFinishMessage());
+            string finishMessage = updateInfo.GetFinishMessage();
+            if (!string.IsNullOrWhiteSpace(finishMessage))
+            {
+                Helper.LogSeparator();
+                Helper.Log(finishMessage);
+            }
             Helper.LogSeparator();
             Helper.Log(updateInfo.GetFinishTitle());
             Helper.LogSeparator();
@@ -122,26 +150,33 @@ namespace FtdModManager.Standalone
 
         static void PrintHelp()
         {
-            Helper.Log("Help");
+            Helper.Log(Properties.Resources.README);
         }
 
         static bool Confirm(string question, bool? defaultBehaviour = null)
         {
+            if (auto)
+                return true;
+
             Console.Write(question);
             while (true)
             {
                 switch (Console.ReadKey(false).Key)
                 {
                     case ConsoleKey.Y:
+                        Console.WriteLine();
                         return true;
                     case ConsoleKey.N:
+                        Console.WriteLine();
                         return false;
                     case ConsoleKey.Enter:
                         if (defaultBehaviour == null)
+                        {
                             Console.Write(question);
-                        else
-                            return defaultBehaviour == true;
-                        break;
+                            break;
+                        }
+                        Console.WriteLine();
+                        return defaultBehaviour == true;
                 }
             }
         }

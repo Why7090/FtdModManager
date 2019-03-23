@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Net;
-using System.Text;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace FtdModManager.Standalone
@@ -12,25 +11,28 @@ namespace FtdModManager.Standalone
         public static string userAgent =
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36";
 
+        private static readonly HttpClient client = new HttpClient();
+
+        static Helper()
+        {
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent);
+        }
+
         public static Task<string> DownloadStringAsync(string url)
         {
-            using (var www = new WebClient())
-            {
-                www.Headers.Add(HttpRequestHeader.UserAgent, userAgent);
-                return www.DownloadStringTaskAsync(url);
-            }
+            return client.GetStringAsync(url);
         }
 
-        public static Task DownloadToFileAsync(string url, string path)
+        public static async Task DownloadToFileAsync(string url, string path)
         {
-            using (var www = new WebClient())
+            using (var file = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write))
+            using (var response = await client.GetStreamAsync(url))
             {
-                www.Headers.Add(HttpRequestHeader.UserAgent, userAgent);
-                return www.DownloadFileTaskAsync(url, path);
+                await response.CopyToAsync(file);
             }
         }
 
-        public static void Log(string message)
+        public static void Log<T>(T message)
         {
             Console.WriteLine(message);
         }

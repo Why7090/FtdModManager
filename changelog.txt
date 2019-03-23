@@ -1,1 +1,4 @@
-﻿0.1.0 (2019-03-18) : Initial version
+﻿0.3.0 (2019-03-23)
+- [added] command-line interface
+
+0.1.0 (2019-03-18) : Initial version

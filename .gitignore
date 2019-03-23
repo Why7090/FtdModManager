@@ -2,7 +2,6 @@
 *.modpref
 
 #Useless files
-Newtonsoft.Json.xml
 FtdModManager.exe.config
 
 ## Ignore Visual Studio temporary files, build results, and
