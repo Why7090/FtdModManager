@@ -28,11 +28,11 @@ namespace FtdModManager
         public GHTreeItem[] newFiles;
         public long downloadSize;
 
-        public readonly ModManifest manifest;
-        public readonly UpdateType updateType;
-        public readonly string modName;
-        public readonly string basePath;
-        public readonly string localVersion;
+        public ModManifest manifest;
+        public UpdateType updateType;
+        public string modName;
+        public string basePath;
+        public string localVersion;
 
         // should return "connected"
         public string connectionCheckUrl = "https://gist.githubusercontent.com/Why7090/9f67ee70a3bba136785fe4d2bece6363/raw/check.txt";
@@ -42,7 +42,9 @@ namespace FtdModManager
         protected string treeUrl;
 
 
-        protected AbstractModUpdateInfo(ModManifest manifest, string modName, string basePath, UpdateType updateType, string localVersion)
+        public AbstractModUpdateInfo() { }
+
+        public AbstractModUpdateInfo(ModManifest manifest, string modName, string basePath, UpdateType updateType, string localVersion)
         {
             this.manifest = manifest;
             this.updateType = updateType;
@@ -51,7 +53,7 @@ namespace FtdModManager
             this.localVersion = localVersion;
         }
 
-        protected AbstractModUpdateInfo(string basePath)
+        public AbstractModUpdateInfo(string basePath)
         {
             this.basePath = basePath;
             manifest = Json.ParseFile<ModManifest>(Path.Combine(this.basePath, ModPreferences.manifestFileName));
@@ -64,6 +66,30 @@ namespace FtdModManager
 
 
         #region Virtual Methods
+
+        public virtual async Task<bool> PrepareNewInstallation(string manifestUri, string installPath = null)
+        {
+            Log("Downloading modmanifest.json...");
+            string json = await DownloadStringAsync(manifestUri);
+            Log("Downloaded modmanifest.json");
+
+            manifest = Json.Parse<ModManifest>(json);
+            modName = string.IsNullOrWhiteSpace(installPath) ? manifest.defaultInstallDir : installPath;
+            basePath = GetModAbsolutePath(modName);
+
+            if (Directory.Exists(basePath) && Directory.GetFileSystemEntries(basePath).Any())
+            {
+                Log("Install directory is not empty. Aborting mod installation...");
+                return false;
+            }
+
+            File.WriteAllText(Path.Combine(basePath, ModPreferences.manifestFileName), json);
+            var pref = new ModPreferences(modName, basePath);
+            localVersion = pref.localVersion;
+            updateType = pref.updateType;
+
+            return true;
+        }
 
         public virtual async Task CheckAndPrepareUpdate()
         {
@@ -192,7 +218,7 @@ namespace FtdModManager
                 Log($"Created directory {dir.PathRelativeTo(basePath)}");
             }
 
-            Log($"Downloading files");
+            Log($"Downloading files...");
             var tasks = await DownloadFiles(changedFiles.Concat(newFiles));
 
             var errors = tasks.Where(x => x.IsFaulted).Select(x => x.Exception);
@@ -519,6 +545,8 @@ namespace FtdModManager
         public abstract void Log(string message);
 
         public abstract void LogException(Exception e);
+
+        public abstract string GetModAbsolutePath(string modDir);
 
         #endregion Abstract Methods
     }

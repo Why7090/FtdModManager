@@ -4,8 +4,8 @@ Paths are relative to the path set in --parent
 Commands:
   help
     * show this message again
-  install <uri> <path>
-    * install a new mod from with the manifest.json from <uri> into directory specified by <path>
+  install <uri> [<path>]
+    * install a new mod with the manifest.json from <uri> into it's default directory, or <path> if specified
   update <path>
     * update a mod managed by FtdModManager
   update all
@@ -20,7 +20,7 @@ Commands:
     * alias of setup
 
 Options:
-  -p --parent
+  -r --root
     * Set the parent directory of mods (default is "Documents/From The Depths/Mods")
   -y --accept-all --yes
     * Accept and skip all confirmations
@@ -29,6 +29,6 @@ Aliases:
   help = --help = h = -h = ?
   install = i
   update = upgrade = u
-  remove = delete = uninstall = r = d = u
+  remove = delete = uninstall = r = d
   list = l
   setup = (run exe without command) = self-update = s

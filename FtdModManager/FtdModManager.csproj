@@ -101,6 +101,8 @@
   <ItemGroup>
     <Compile Include="GeneralFile.cs" />
     <Compile Include="GeneralFolder.cs" />
+    <Compile Include="Manager.cs" />
+    <Compile Include="ManagerUI.cs" />
     <Compile Include="PopupMultiButton.cs" />
     <Compile Include="ModManagerPlugin.cs" />
     <Compile Include="Helper.cs" />

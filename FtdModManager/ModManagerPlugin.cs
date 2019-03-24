@@ -1,7 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using BrilliantSkies.Core.Timing;
+using BrilliantSkies.Core.Unity;
 using BrilliantSkies.Modding;
 using BrilliantSkies.Modding.Managing;
+using BrilliantSkies.PlayerProfiles;
+using UnityEngine;
 
 namespace FtdModManager
 {
@@ -15,18 +21,13 @@ namespace FtdModManager
 
         public bool AfterAllPluginsLoaded()
         {
-            foreach (var mod in ConfigurationManager.Instance.Modifications)
+            new Manager().DetectMods();
+
+            GameEvents.UpdateEvent += Helper.CreateKeyPressEvent(() =>
             {
-                if (mod.Header.Core)
-                    continue;
 
-                var pref = new ModPreferences(mod.Header.ComponentId.Name, mod.Header.ModDirectoryWithSlash);
-                mods.Add(pref);
-                Helper.RemoveTempFilesInDirectory(pref.basePath);
+            }, false, new KeyDef(KeyCode.M, KeyMod.Ctrl)).ToDRegularEvent();
 
-                var updateInfo = new FtdModUpdateInfo(pref.manifest, pref);
-                updateInfo.CheckAndPrepareUpdate().ContinueWith(updateInfo.ConfirmUpdate);
-            }
             return true;
         }
 

@@ -11,14 +11,15 @@ namespace FtdModManager
         public string recursiveTreeUrlTemplate; // github: https://api.github.com/repos/<user>/<repo>/git/trees/{0}?recursive=1
         public string fileUrlTemplate;          // github: https://raw.githubusercontent.com/<user>/<repo>/{0}/{1}
         
-        public UpdateType defaultUpdateType;
+        public UpdateType defaultUpdateType;    // None, LatestCommit, LatestRelease
+        public string defaultInstallDir;        // Example: "ExampleMod"
 
         public ModManifest() { }
 
         public ModManifest(
             string latestCommitUrl, string latestReleaseUrl,
             string tagUrlTemplate, string recursiveTreeUrlTemplate, string fileUrlTemplate,
-            UpdateType defaultUpdateType)
+            UpdateType defaultUpdateType, string defaultInstallDir)
         {
             this.latestCommitUrl = latestCommitUrl;
             this.latestReleaseUrl = latestReleaseUrl;
@@ -26,9 +27,11 @@ namespace FtdModManager
             this.recursiveTreeUrlTemplate = recursiveTreeUrlTemplate;
             this.fileUrlTemplate = fileUrlTemplate;
             this.defaultUpdateType = defaultUpdateType;
+            this.defaultInstallDir = defaultInstallDir;
         }
 
-        public static ModManifest FromGithubRepo (string user, string repo, string branch, UpdateType defaultUpdateType)
+        public static ModManifest FromGithubRepo (string user, string repo, string branch,
+            UpdateType defaultUpdateType, string defaultInstallDir = null)
         {
             return new ModManifest(
                 $"https://api.github.com/repos/{user}/{repo}/commits/{branch}",
@@ -36,7 +39,7 @@ namespace FtdModManager
                 $"https://api.github.com/repos/{user}/{repo}/git/refs/tags/{{0}}",
                 $"https://api.github.com/repos/{user}/{repo}/git/trees/{{0}}?recursive=1",
                 $"https://raw.githubusercontent.com/{user}/{repo}/{{0}}/{{1}}",
-                defaultUpdateType);
+                defaultUpdateType, defaultInstallDir ?? repo);
         }
     }
 }

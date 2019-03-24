@@ -13,7 +13,7 @@ namespace FtdModManager.Standalone
         const string modRelativePath = "From The Depths/Mods";
         const string ownManifestUri = "https://raw.githubusercontent.com/Why7090/FtdModManager/master/modmanifest.json";
 
-        static string modParentPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), modRelativePath).NormalizedDirPath();
+        static string rootPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), modRelativePath).NormalizedDirPath();
         static Args args;
 
         static bool auto = false;
@@ -25,11 +25,11 @@ namespace FtdModManager.Standalone
             args.AddCommand("help",    0, "-help", "--help", "/help", "-h", "/h", "h", "-?", "/?", "?");
             args.AddCommand("install", 2, "i");
             args.AddCommand("update",  1, "u", "upgrade");
-            args.AddCommand("remove",  1, "r", "d", "delete", "u", "uninstall");
+            args.AddCommand("remove",  1, "r", "d", "delete", "uninstall");
             args.AddCommand("list",    0, "l");
             args.AddCommand("setup",   0, "s", "self-update");
 
-            args.AddOption("--parent",     false, "-p");
+            args.AddOption("--root",       false, "-r");
             args.AddOption("--accept-all", true,  "-y", "--yes");
 
             args.Parse(arguments);
@@ -41,7 +41,8 @@ namespace FtdModManager.Standalone
         {
             if (!args.TryGetCommand(out string cmd) || cmd == "setup") // self-update
             {
-                string installPath = Path.Combine(modParentPath, "FtdModManager").NormalizedDirPath();
+                string installPath = Path.Combine(rootPath, "FtdModManager").NormalizedDirPath();
+                Console.WriteLine($"Installing FtdModManager to {installPath}");
 
                 InstallMod(ownManifestUri, installPath);
 
@@ -61,20 +62,20 @@ namespace FtdModManager.Standalone
             if (args.IsTrue("--accept-all"))
                 auto = true;
 
-            if (args.TryGetOption("--parent", out string value))
-                modParentPath = value.NormalizedDirPath();
-            Directory.SetCurrentDirectory(modParentPath);
+            if (args.TryGetOption("--root", out string value))
+                rootPath = value.NormalizedDirPath();
+            Directory.SetCurrentDirectory(rootPath);
 
             if (cmd == "install")
             {
-                InstallMod(param[0], Path.GetFullPath(param[1]).NormalizedDirPath());
+                InstallMod(param[0], param[1]);
             }
 
             if (cmd == "update")
             {
                 if (param[0] == "all")
                 {
-                    foreach (string file in Directory.GetFiles(modParentPath, ModPreferences.manifestFileName, SearchOption.AllDirectories))
+                    foreach (string file in Directory.GetFiles(rootPath, ModPreferences.manifestFileName, SearchOption.AllDirectories))
                     {
                         UpdateMod(Path.GetDirectoryName(file));
                     }
@@ -89,31 +90,35 @@ namespace FtdModManager.Standalone
             }
         }
 
-        static void InstallMod(string manifestUri, string installFolder)
+        static void InstallMod(string manifestUri, string installFolder = null)
         {
             InstallModAsync(manifestUri, installFolder).Wait();
         }
 
-        static async Task InstallModAsync(string manifestUri, string installFolder)
+        static async Task InstallModAsync(string manifestUri, string installFolder = null)
         {
-            Directory.CreateDirectory(installFolder);
-            if (!File.Exists(Path.Combine(installFolder, ModPreferences.manifestFileName)))
+            var info = new StandaloneModUpdateInfo(rootPath);
+            bool success = await info.PrepareNewInstallation(manifestUri, installFolder);
+            if (!success)
             {
-                Helper.Log("Downloading manifest...");
-                await Helper.DownloadToFileAsync(manifestUri, Path.Combine(installFolder, ModPreferences.manifestFileName));
-                Helper.Log("Downloaded manifest file");
+                Helper.Log("\n");
+                Helper.Log("The following target directory is not empty.");
+                Helper.Log(info.basePath);
+                if (!Confirm("Do you want to delete this folder permanently in order to continue installation? [y/N] : ", false))
+                    return;
+                await info.PrepareNewInstallation(manifestUri, installFolder);
             }
-            await UpdateModAsync(installFolder);
+            await UpdateModAsync(info);
         }
 
         static void UpdateMod(string basePath)
         {
-            UpdateModAsync(basePath).Wait();
+            var updateInfo = new StandaloneModUpdateInfo(basePath);
+            UpdateModAsync(updateInfo).Wait();
         }
 
-        static async Task UpdateModAsync(string basePath)
+        static async Task UpdateModAsync(StandaloneModUpdateInfo updateInfo)
         {
-            var updateInfo = new StandaloneModUpdateInfo(basePath);
             await updateInfo.CheckAndPrepareUpdate();
             
             Helper.Log("\n");
@@ -150,15 +155,19 @@ namespace FtdModManager.Standalone
 
         static void PrintHelp()
         {
-            Helper.Log(Properties.Resources.README);
+            Console.WriteLine(Properties.Resources.README);
         }
 
         static bool Confirm(string question, bool? defaultBehaviour = null)
         {
-            if (auto)
-                return true;
-
             Console.Write(question);
+
+            if (auto)
+            {
+                Console.Write("y (--accept-all)");
+                return true;
+            }
+
             while (true)
             {
                 switch (Console.ReadKey(false).Key)

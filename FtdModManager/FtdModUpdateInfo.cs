@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
+using BrilliantSkies.Core.Constants;
 using BrilliantSkies.Ui.Special.PopUps;
 using BrilliantSkies.Ui.Tips;
 using UnityEngine;
@@ -9,6 +11,8 @@ namespace FtdModManager
 {
     public class FtdModUpdateInfo : AbstractModUpdateInfo
     {
+        public FtdModUpdateInfo() : base() { }
+
         public FtdModUpdateInfo(ModManifest modManifest, ModPreferences modPreferences) : base(
             modManifest,
             modPreferences.modName,
@@ -61,6 +65,11 @@ namespace FtdModManager
             var www = UnityWebRequest.Get(url);
             await www.SendWebRequest();
             return www.downloadHandler.text;
+        }
+
+        public override string GetModAbsolutePath(string modDir)
+        {
+            return Path.Combine(Get.PerminentPaths.RootModDir().ToString(), modDir).NormalizedDirPath();
         }
 
         public override void Log(string message)
