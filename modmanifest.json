@@ -4,6 +4,6 @@
   "tagUrlTemplate":           "https://api.github.com/repos/why7090/ftdmodmanager/git/refs/tags/{0}",         // https://developer.github.com/v3/git/tags/#get-a-tag
   "recursiveTreeUrlTemplate": "https://api.github.com/repos/why7090/ftdmodmanager/git/trees/{0}?recursive=1", // https://developer.github.com/v3/git/trees/#get-a-tree-recursively
   "fileUrlTemplate":     "https://raw.githubusercontent.com/why7090/ftdmodmanager/{0}/{1}",                   // {0} is commit sha and {1} is file path
-  "defaultUpdateType": "LatestRelease",                                                                       // Update channel, "Disabled" or "LatestRelease" or "LatestCommit"
+  "defaultUpdateType": "LatestCommit",                                                                        // Update channel, "Disabled" or "LatestRelease" or "LatestCommit"
   "defaultInstallDir": "FtdModManager"                                                                        // Default mod directory name, usually same as the mod's name
 }
