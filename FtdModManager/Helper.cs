@@ -53,6 +53,12 @@ namespace FtdModManager
             Debug.LogException(e);
         }
 
+        public static void OpenInExplorer(string path)
+        {
+            path = path.TrimEnd(new[] { '\\', '/' }); // Mac doesn't like trailing slash
+            System.Diagnostics.Process.Start(path);
+        }
+
         public static KeyPressEvent CreateKeyPressEvent(KeyPressEvent.DKeyPressEvent keyPressed, bool useEvent, KeyDef key)
         {
             var ev = new KeyPressEvent(() =>

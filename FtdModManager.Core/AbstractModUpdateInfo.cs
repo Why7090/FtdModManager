@@ -83,7 +83,9 @@ namespace FtdModManager
                 return false;
             }
 
+            Directory.CreateDirectory(basePath);
             File.WriteAllText(Path.Combine(basePath, ModPreferences.manifestFileName), json);
+
             var pref = new ModPreferences(modName, basePath);
             localVersion = pref.localVersion;
             updateType = pref.updateType;

@@ -7,6 +7,7 @@ using BrilliantSkies.Core.Unity;
 using BrilliantSkies.Modding;
 using BrilliantSkies.Modding.Managing;
 using BrilliantSkies.PlayerProfiles;
+using BrilliantSkies.Ui.Displayer;
 using UnityEngine;
 
 namespace FtdModManager
@@ -19,13 +20,16 @@ namespace FtdModManager
 
         public readonly List<ModPreferences> mods = new List<ModPreferences>();
 
+        public Manager manager;
+
         public bool AfterAllPluginsLoaded()
         {
-            new Manager().DetectMods();
+            manager = new Manager();
+            manager.DetectMods();
 
             GameEvents.UpdateEvent += Helper.CreateKeyPressEvent(() =>
             {
-
+                new ManagerUI(manager).ActivateGuiToggle(GuiActivateType.Stack, GuiActivateToggleType.Type);
             }, false, new KeyDef(KeyCode.M, KeyMod.Ctrl)).ToDRegularEvent();
 
             return true;

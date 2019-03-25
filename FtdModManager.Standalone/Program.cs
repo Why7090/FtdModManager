@@ -164,7 +164,7 @@ namespace FtdModManager.Standalone
 
             if (auto)
             {
-                Console.Write("y (--accept-all)");
+                Console.WriteLine("y (--accept-all)");
                 return true;
             }
 
