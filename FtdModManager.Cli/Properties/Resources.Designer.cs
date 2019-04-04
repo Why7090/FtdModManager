@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace FtdModManager.Standalone.Properties {
+namespace FtdModManager.Cli.Properties {
     using System;
     
     
@@ -19,7 +19,7 @@ namespace FtdModManager.Standalone.Properties {
     // 类通过类似于 ResGen 或 Visual Studio 的工具自动生成的。
     // 若要添加或移除成员，请编辑 .ResX 文件，然后重新运行 ResGen
     // (以 /str 作为命令选项)，或重新生成 VS 项目。
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -39,7 +39,7 @@ namespace FtdModManager.Standalone.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FtdModManager.Standalone.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FtdModManager.Cli.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -62,32 +62,23 @@ namespace FtdModManager.Standalone.Properties {
         
         /// <summary>
         ///   查找类似 Automated installation and update of From The Depths mods.
-        ///
         ///Paths are relative to the path set in --parent
         ///
-        ///
         ///Commands:
-        ///
         ///  help
         ///    * show this message again
-        ///
-        ///  install &lt;uri&gt; &lt;path&gt;
-        ///    * install a new mod from with the manifest.json from &lt;uri&gt; into directory specified by &lt;path&gt;
-        ///
+        ///  install &lt;uri&gt; [&lt;path&gt;]
+        ///    * install a new mod with the manifest.json from &lt;uri&gt; into it&apos;s default directory, or &lt;path&gt; if specified
         ///  update &lt;path&gt;
         ///    * update a mod managed by FtdModManager
-        ///
         ///  update all
         ///    * update all mods
-        ///
         ///  remove &lt;path&gt;
         ///    * uninstall a mod
-        ///
         ///  list
         ///    * show all mods managed by FtdModManager
-        ///  
         ///  setup
-        ///    * i [字符串的其余部分被截断]&quot;; 的本地化字符串。
+        ///    * install [字符串的其余部分被截断]&quot;; 的本地化字符串。
         /// </summary>
         internal static string README {
             get {

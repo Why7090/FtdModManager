@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FtdModManager.Standalone
+namespace FtdModManager.Cli
 {
     public class Args
     {

@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>5c7b2df8-3649-4de8-a509-8d8e17aaad7c</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>FtdModManager</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)AbstractModUpdateInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GitHubObjects.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Misc.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ModManifest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ModPreferences.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ThirdParty\IgnoreRules.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ThirdParty\PetaJson.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UpdateType.cs" />
+  </ItemGroup>
+</Project>

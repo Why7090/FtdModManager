@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace FtdModManager.Standalone
+namespace FtdModManager.Cli
 {
-    internal static class Program
+    class Program
     {
         const string modRelativePath = "From The Depths/Mods";
         const string ownManifestUri = "https://raw.githubusercontent.com/Why7090/FtdModManager/master/modmanifest.json";
@@ -22,15 +19,15 @@ namespace FtdModManager.Standalone
         {
             args = new Args();
 
-            args.AddCommand("help",    0, "-help", "--help", "/help", "-h", "/h", "h", "-?", "/?", "?");
+            args.AddCommand("help", 0, "-help", "--help", "/help", "-h", "/h", "h", "-?", "/?", "?");
             args.AddCommand("install", 2, "i");
-            args.AddCommand("update",  1, "u", "upgrade");
-            args.AddCommand("remove",  1, "r", "d", "delete", "uninstall");
-            args.AddCommand("list",    0, "l");
-            args.AddCommand("setup",   0, "s", "self-update");
+            args.AddCommand("update", 1, "u", "upgrade");
+            args.AddCommand("remove", 1, "r", "d", "delete", "uninstall");
+            args.AddCommand("list", 0, "l");
+            args.AddCommand("setup", 0, "s", "self-update");
 
-            args.AddOption("--root",       false, "-r");
-            args.AddOption("--accept-all", true,  "-y", "--yes");
+            args.AddOption("--root", false, "-r");
+            args.AddOption("--accept-all", true, "-y", "--yes");
 
             args.Parse(arguments);
 
@@ -97,7 +94,7 @@ namespace FtdModManager.Standalone
 
         static async Task InstallModAsync(string manifestUri, string installFolder = null)
         {
-            var info = new StandaloneModUpdateInfo(rootPath);
+            var info = new CliModUpdateInfo(rootPath);
             bool success = await info.PrepareNewInstallation(manifestUri, installFolder);
             if (!success)
             {
@@ -113,14 +110,14 @@ namespace FtdModManager.Standalone
 
         static void UpdateMod(string basePath)
         {
-            var updateInfo = new StandaloneModUpdateInfo(basePath);
+            var updateInfo = new CliModUpdateInfo(basePath);
             UpdateModAsync(updateInfo).Wait();
         }
 
-        static async Task UpdateModAsync(StandaloneModUpdateInfo updateInfo)
+        static async Task UpdateModAsync(CliModUpdateInfo updateInfo)
         {
             await updateInfo.CheckAndPrepareUpdate();
-            
+
             Helper.Log("\n");
             if (updateInfo.isUpdateAvailable)
             {

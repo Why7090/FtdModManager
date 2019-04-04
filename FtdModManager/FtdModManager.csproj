@@ -112,11 +112,6 @@
   <ItemGroup>
     <Compile Include="FtdModUpdateInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\FtdModManager.Core\FtdModManager.Core.csproj">
-      <Project>{60cd5746-8df7-40bf-a9b9-81301b219a60}</Project>
-      <Name>FtdModManager.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <Import Project="..\FtdModManager.Core\FtdModManager.Core.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

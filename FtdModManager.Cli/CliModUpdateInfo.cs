@@ -2,28 +2,28 @@
 using System.IO;
 using System.Threading.Tasks;
 
-namespace FtdModManager.Standalone
+namespace FtdModManager.Cli
 {
-    public class StandaloneModUpdateInfo : AbstractModUpdateInfo
+    public class CliModUpdateInfo : AbstractModUpdateInfo
     {
         public string root;
 
-        public StandaloneModUpdateInfo(string root) : base()
+        public CliModUpdateInfo(string root) : base()
         {
             this.root = root;
         }
 
-        public StandaloneModUpdateInfo(string root, ModManifest modManifest, string modName, string basePath, UpdateType updateType, string localVersion)
+        public CliModUpdateInfo(string root, ModManifest modManifest, string modName, string basePath, UpdateType updateType, string localVersion)
             : base(modManifest, modName, basePath, updateType, localVersion)
         {
             this.root = root;
         }
 
-        public StandaloneModUpdateInfo(string root, string basePath) : base(basePath)
+        public CliModUpdateInfo(string root, string basePath) : base(basePath)
         {
             this.root = root;
         }
-        
+
         public override Task<string> DownloadStringAsync(string url)
         {
             return Helper.DownloadStringAsync(url);
