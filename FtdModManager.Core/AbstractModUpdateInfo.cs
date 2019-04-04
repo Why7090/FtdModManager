@@ -49,13 +49,13 @@ namespace FtdModManager
             this.manifest = manifest;
             this.updateType = updateType;
             this.modName = modName;
-            this.basePath = modName;
+            this.basePath = basePath.NormalizedDirPath();
             this.localVersion = localVersion;
         }
 
         public AbstractModUpdateInfo(string basePath)
         {
-            this.basePath = basePath;
+            this.basePath = basePath.NormalizedDirPath();
             manifest = Json.ParseFile<ModManifest>(Path.Combine(this.basePath, ModPreferences.manifestFileName));
             modName = new DirectoryInfo(basePath).Name;
             
@@ -75,7 +75,7 @@ namespace FtdModManager
 
             manifest = Json.Parse<ModManifest>(json);
             modName = string.IsNullOrWhiteSpace(installPath) ? manifest.defaultInstallDir : installPath;
-            basePath = GetModAbsolutePath(modName);
+            basePath = GetModAbsolutePath(modName).NormalizedDirPath();
 
             if (Directory.Exists(basePath) && Directory.GetFileSystemEntries(basePath).Any())
             {
@@ -103,6 +103,7 @@ namespace FtdModManager
             }
             try
             {
+                Log($"Checking update for {modName}");
                 await CheckUpdate();
 
                 if (!isUpdateAvailable)
@@ -186,6 +187,7 @@ namespace FtdModManager
                 && newFiles.Length == 0
                 && removedFiles.Length == 0)
             {
+                Log($"New version detected for {modName}, but local files and remote files are identical");
                 isUpdateAvailable = false;
             }
         }

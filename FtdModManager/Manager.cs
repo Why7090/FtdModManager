@@ -42,7 +42,7 @@ namespace FtdModManager
 
         public void SetUpdateType(ModPreferences mod, UpdateType type)
         {
-            if (mod?.Managed == true)
+            if (mod?.Managed == true && mod.updateType != type)
             {
                 mod.updateType = type;
                 mod.Save();

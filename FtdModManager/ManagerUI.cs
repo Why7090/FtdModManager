@@ -34,7 +34,7 @@ namespace FtdModManager
             
             foreach (var mod in _focus.mods)
             {
-                var btn = seg1.AddInterpretter(SubjectiveButton<ModPreferences>.Quick(mod, mod.modName, new ToolTip(mod.basePath), x =>
+                var btn = seg1.AddInterpretter(SubjectiveButton<ModPreferences>.Quick(mod, mod.modName, new ToolTip(mod.basePath, 400), x =>
                 {
                     selected = x;
                 }));
@@ -42,14 +42,23 @@ namespace FtdModManager
             }
 
 
-            var window2 = NewWindow("Mod Options", WindowSizing.GetRhs());
+            var window2 = NewWindow("Mod Manager", WindowSizing.GetRhs());
             window2.DisplayTextPrompt = false;
+
+
+            window2.Screen.CreateHeader("Mod Options", new ToolTip("Options for the selected mod"));
             var seg2 = window2.Screen.CreateStandardSegment();
+            seg2.SetConditionalDisplay(() => selected != null);
 
             seg2.AddInterpretter(SubjectiveDisplay<Manager>.Quick(_focus, M.m<Manager>(
-                x => $"This mod is {(selected.Managed ? "" : "<b>not</b> ")}managed by FtdModManager."
-                ), "Information about this mod"))
-                .SetConditionalDisplayFunction(() => selected != null);
+                x =>
+                {
+                    if (selected.Managed)
+                        return "This mod is managed by FtdModManager";
+                    else
+                        return "This mod is <b>not</b> managed by FtdModManager";
+                }
+                ), "Information about this mod"));
 
             var items = Enum.GetNames(typeof(UpdateType)).Select(x => new DropDownMenuAltItem<UpdateType> { Name = x, ToolTip = x });
             var menu = new DropDownMenuAlt<UpdateType>();
@@ -57,37 +66,37 @@ namespace FtdModManager
 
             seg2.AddInterpretter(new DropDown<Manager, UpdateType>(_focus, menu,
                 (manager, x) => x == selected.updateType,
-                (manager, x) => _focus.SetUpdateType(selected, x)))
-                .SetConditionalDisplayFunction(() => selected != null);
+                (manager, x) => _focus.SetUpdateType(selected, x)));
 
             seg2.AddInterpretter(SubjectiveButton<Manager>.Quick(_focus, "Check update", new ToolTip("Check update"), x =>
                 {
                     x.CheckUpdate(selected);
-                }))
-                .SetConditionalDisplayFunction(() => selected != null);
+                }));
 
             seg2.AddInterpretter(SubjectiveButton<Manager>.Quick(_focus, "Uninstall", new ToolTip("Uninstall mod"), x =>
                 {
                     _focus.DetectMods();
                     TriggerRebuild();
-                }))
-                .SetConditionalDisplayFunction(() => selected != null);
+                }));
 
-            seg2.AddInterpretter(new Blank());
+            window2.Screen.CreateSpace();
 
-            seg2.AddInterpretter(SubjectiveButton<Manager>.Quick(_focus, "Install new mod", new ToolTip("Install new mod"),
+            window2.Screen.CreateHeader("Other", new ToolTip("Install mod, etc."));
+            var seg3 = window2.Screen.CreateStandardSegment();
+
+            seg3.AddInterpretter(SubjectiveButton<Manager>.Quick(_focus, "Install new mod", new ToolTip("Install new mod"),
                 x => preparingInstall = true))
                 .SetConditionalDisplayFunction(() => !preparingInstall);
 
-            seg2.AddInterpretter(TextInput<Manager>.Quick(_focus, M.m<Manager>(x => manifestUri), "Installation URI",
+            seg3.AddInterpretter(TextInput<Manager>.Quick(_focus, M.m<Manager>(x => manifestUri), "Install URI",
                 new ToolTip("Paste the URI of the modmanifest.json here"), (manager, x) => manifestUri = x))
                 .SetConditionalDisplayFunction(() => preparingInstall);
 
-            seg2.AddInterpretter(TextInput<Manager>.Quick(_focus, M.m<Manager>(x => modDir), "Installation path (Optional)",
+            seg3.AddInterpretter(TextInput<Manager>.Quick(_focus, M.m<Manager>(x => modDir), "Install path (Optional)",
                 new ToolTip("The installation directory of the new mod. Leave empty to use default value"), (manager, x) => modDir = x))
                 .SetConditionalDisplayFunction(() => preparingInstall);
 
-            seg2.AddInterpretter(SubjectiveButton<Manager>.Quick(_focus, "Install", new ToolTip("Install new mod!"), x =>
+            seg3.AddInterpretter(SubjectiveButton<Manager>.Quick(_focus, "Install", new ToolTip("Install new mod!"), x =>
                 {
                     _focus.Install(manifestUri, modDir).ContinueWith(y =>
                     {
@@ -101,11 +110,11 @@ namespace FtdModManager
                 }))
                 .SetConditionalDisplayFunction(() => preparingInstall && !isInstalling);
 
-            seg2.AddInterpretter(SubjectiveButton<Manager>.Quick(_focus, "Cancel", new ToolTip("Cancel mod installation"),
+            seg3.AddInterpretter(SubjectiveButton<Manager>.Quick(_focus, "Cancel", new ToolTip("Cancel mod installation"),
                 x => preparingInstall = false))
                 .SetConditionalDisplayFunction(() => preparingInstall && !isInstalling);
 
-            seg2.AddInterpretter(SubjectiveButton<Manager>.Quick(_focus, "Restart FtD", new ToolTip("Reload mods"),
+            seg3.AddInterpretter(SubjectiveButton<Manager>.Quick(_focus, "Restart FtD", new ToolTip("Reload mods"),
                 x => _focus.RestartGame()))
                 .SetConditionalDisplayFunction(() => !isInstalling);
 

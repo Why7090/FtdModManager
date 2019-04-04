@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using BrilliantSkies.Core.Timing;
-using BrilliantSkies.Core.Unity;
 using BrilliantSkies.Modding;
-using BrilliantSkies.Modding.Managing;
 using BrilliantSkies.PlayerProfiles;
 using BrilliantSkies.Ui.Displayer;
 using UnityEngine;
@@ -16,7 +12,7 @@ namespace FtdModManager
     {
         public string name => "FtdModManager";
 
-        public Version version => new Version("0.3.0");
+        public Version version => new Version("0.3.1");
 
         public readonly List<ModPreferences> mods = new List<ModPreferences>();
 
@@ -26,6 +22,7 @@ namespace FtdModManager
         {
             manager = new Manager();
             manager.DetectMods();
+            manager.CheckUpdate();
 
             GameEvents.UpdateEvent += Helper.CreateKeyPressEvent(() =>
             {

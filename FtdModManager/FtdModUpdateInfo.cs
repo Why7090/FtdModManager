@@ -16,7 +16,7 @@ namespace FtdModManager
         public FtdModUpdateInfo(ModManifest modManifest, ModPreferences modPreferences) : base(
             modManifest,
             modPreferences.modName,
-            modPreferences.basePath.NormalizedDirPath(),
+            modPreferences.basePath,
             modPreferences.updateType,
             modPreferences.localVersion
         )
@@ -24,19 +24,26 @@ namespace FtdModManager
 
         public void ConfirmUpdate(Task task = null)
         {
-            Log("Mod Update Available");
             if (isUpdateAvailable)
             {
-                GuiPopUp.Instance.Add(
-                    new PopupMultiButton(
-                        GetConfirmationTitle(),
-                        GetConfirmationMessage(),
-                        false
-                    )
-                    .AddButton("<b>Update now</b>", x => ApplyUpdate().ContinueWith(AlertUpdateCompletion))
-                    .AddButton("Remind me next time", toolTip: new ToolTip("Cancel update"))
-                    .AddButton("Copy to clipboard", x => GUIUtility.systemCopyBuffer = x.message, false)
-                );
+                Log($"Mod Update Available : {modName}");
+                try
+                {
+                    GuiPopUp.Instance.Add(
+                        new PopupMultiButton(
+                            GetConfirmationTitle(),
+                            GetConfirmationMessage(),
+                            false
+                        )
+                        .AddButton("<b>Update now</b>", x => ApplyUpdate().ContinueWith(AlertUpdateCompletion))
+                        .AddButton("Remind me next time", toolTip: new ToolTip("Cancel update"))
+                        .AddButton("Copy to clipboard", x => GUIUtility.systemCopyBuffer = x.message, false)
+                    );
+                }
+                catch (Exception e)
+                {
+                    LogException(e);
+                }
             }
         }
 

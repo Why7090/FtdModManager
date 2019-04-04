@@ -20,6 +20,7 @@ namespace FtdModManager
         public string updateTitle = "";
         public string updateMessage = "";
 
+        public bool isUpdateAvailable = false;
         public bool hasManifest;
         public bool hasGit;
         public bool Managed => hasManifest && !hasGit;
