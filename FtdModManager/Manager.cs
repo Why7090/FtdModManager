@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using BrilliantSkies.Core.SteamworksIntegration;
+﻿using BrilliantSkies.Core.SteamworksIntegration;
 using BrilliantSkies.Modding.Managing;
 using BrilliantSkies.PlayerProfiles;
 using BrilliantSkies.Ui.Special.PopUps;
 using BrilliantSkies.Ui.Tips;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FtdModManager
 {
@@ -36,8 +36,8 @@ namespace FtdModManager
 
         public void CheckUpdate(ModPreferences mod)
         {
-            var updateInfo = new FtdModUpdateInfo(mod.manifest, mod);
-            updateInfo.CheckAndPrepareUpdate().ContinueWith(updateInfo.ConfirmUpdate);
+            mod.updateInfo = new FtdModUpdateInfo(mod.manifest, mod);
+            mod.updateInfo.CheckAndPrepareUpdate().ContinueWith((mod.updateInfo as FtdModUpdateInfo).ConfirmUpdate);
         }
 
         public void SetUpdateType(ModPreferences mod, UpdateType type)

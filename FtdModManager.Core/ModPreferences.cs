@@ -1,5 +1,5 @@
-﻿using System.IO;
-using PetaJson;
+﻿using PetaJson;
+using System.IO;
 
 namespace FtdModManager
 {
@@ -13,7 +13,7 @@ namespace FtdModManager
         public bool checkCompatibility = false;
         [Json]
         public string localVersion = "";
-        
+
         public string modName;
         public string basePath;
         public string newTreeUrl;
@@ -25,6 +25,8 @@ namespace FtdModManager
         public bool hasGit;
         public bool Managed => hasManifest && !hasGit;
 
+        public AbstractModUpdateInfo updateInfo;
+
         public const string prefFileName = "user.modpref";
         public const string manifestFileName = "modmanifest.json";
 
@@ -34,7 +36,7 @@ namespace FtdModManager
         {
             this.modName = modName;
             this.basePath = basePath;
-            
+
             string manifestPath = Path.Combine(this.basePath, manifestFileName);
             hasManifest = File.Exists(manifestPath);
             hasGit = Directory.Exists(Path.Combine(this.basePath, ".git"));

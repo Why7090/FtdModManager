@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using BrilliantSkies.Core.Timing;
+﻿using BrilliantSkies.Core.Timing;
 using BrilliantSkies.Modding;
 using BrilliantSkies.PlayerProfiles;
 using BrilliantSkies.Ui.Displayer;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace FtdModManager

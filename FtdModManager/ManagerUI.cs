@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using BrilliantSkies.Modding.Types;
-using BrilliantSkies.Ui.Consoles;
+﻿using BrilliantSkies.Ui.Consoles;
 using BrilliantSkies.Ui.Consoles.Getters;
-using BrilliantSkies.Ui.Consoles.Interpretters;
 using BrilliantSkies.Ui.Consoles.Interpretters.Simple;
 using BrilliantSkies.Ui.Consoles.Interpretters.Subjective;
 using BrilliantSkies.Ui.Consoles.Interpretters.Subjective.Buttons;
 using BrilliantSkies.Ui.Consoles.Interpretters.Subjective.Texts;
 using BrilliantSkies.Ui.Layouts.DropDowns;
 using BrilliantSkies.Ui.Tips;
+using System;
+using System.Linq;
 using UnityEngine;
 
 namespace FtdModManager
@@ -31,7 +27,7 @@ namespace FtdModManager
             var window1 = NewWindow("Mod List", WindowSizing.GetLhs());
             window1.DisplayTextPrompt = false;
             var seg1 = window1.Screen.CreateStandardSegment();
-            
+
             foreach (var mod in _focus.mods)
             {
                 var btn = seg1.AddInterpretter(SubjectiveButton<ModPreferences>.Quick(mod, mod.modName, new ToolTip(mod.basePath, 400), x =>
@@ -81,7 +77,7 @@ namespace FtdModManager
 
             window2.Screen.CreateSpace();
 
-            window2.Screen.CreateHeader("Other", new ToolTip("Install mod, etc."));
+            window2.Screen.CreateHeader("Mod Installation", new ToolTip("Install mod, etc."));
             var seg3 = window2.Screen.CreateStandardSegment();
 
             seg3.AddInterpretter(SubjectiveButton<Manager>.Quick(_focus, "Install new mod", new ToolTip("Install new mod"),
@@ -96,7 +92,9 @@ namespace FtdModManager
                 new ToolTip("The installation directory of the new mod. Leave empty to use default value"), (manager, x) => modDir = x))
                 .SetConditionalDisplayFunction(() => preparingInstall);
 
-            seg3.AddInterpretter(SubjectiveButton<Manager>.Quick(_focus, "Install", new ToolTip("Install new mod!"), x =>
+            var seg4 = window2.Screen.CreateStandardHorizontalSegment();
+
+            seg4.AddInterpretter(SubjectiveButton<Manager>.Quick(_focus, "Install", new ToolTip("Install new mod!"), x =>
                 {
                     _focus.Install(manifestUri, modDir).ContinueWith(y =>
                     {
@@ -110,13 +108,17 @@ namespace FtdModManager
                 }))
                 .SetConditionalDisplayFunction(() => preparingInstall && !isInstalling);
 
-            seg3.AddInterpretter(SubjectiveButton<Manager>.Quick(_focus, "Cancel", new ToolTip("Cancel mod installation"),
+            seg4.AddInterpretter(SubjectiveButton<Manager>.Quick(_focus, "Cancel", new ToolTip("Cancel mod installation"),
                 x => preparingInstall = false))
                 .SetConditionalDisplayFunction(() => preparingInstall && !isInstalling);
 
-            seg3.AddInterpretter(SubjectiveButton<Manager>.Quick(_focus, "Restart FtD", new ToolTip("Reload mods"),
+            window2.Screen.CreateHeader("Miscellaneous", new ToolTip("Other useful operations"));
+            var seg5 = window2.Screen.CreateStandardSegment();
+
+            (seg5.AddInterpretter(SubjectiveButton<Manager>.Quick(_focus, "Restart FtD", new ToolTip("Restart FtD in order to reload mods"),
                 x => _focus.RestartGame()))
-                .SetConditionalDisplayFunction(() => !isInstalling);
+                .SetConditionalDisplayFunction(() => !isInstalling) as SubjectiveButton<Manager>)
+                .Color = new VSG<Color, Manager>(new Color(255 / 255f, 179 / 255f, 179 / 255f));
 
             //window.Screen.CreateSpace();
             return window1;

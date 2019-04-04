@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using BrilliantSkies.Ui.Consoles;
+﻿using BrilliantSkies.Ui.Consoles;
 using BrilliantSkies.Ui.Consoles.Getters;
 using BrilliantSkies.Ui.Consoles.Interpretters.Subjective;
 using BrilliantSkies.Ui.Consoles.Interpretters.Subjective.Buttons;
 using BrilliantSkies.Ui.Special.PopUps.Internal;
 using BrilliantSkies.Ui.Tips;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace FtdModManager
