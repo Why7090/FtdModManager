@@ -4,7 +4,6 @@ using BrilliantSkies.Core.Timing;
 using BrilliantSkies.Modding;
 using BrilliantSkies.PlayerProfiles;
 using BrilliantSkies.Ui.Displayer;
-using BrilliantSkies.Ui.Special.PopUps;
 using UnityEngine;
 
 namespace FtdModManager
@@ -25,7 +24,6 @@ namespace FtdModManager
             manager.DetectMods();
             manager.CheckUpdate();
 
-            GuiPopUp.Instance.Add(new PopupInfo("You just received an update!!!!!!", "The mod self-updated if you see this.\nOwO"));
             GameEvents.UpdateEvent += Helper.CreateKeyPressEvent(() =>
             {
                 new ManagerUI(manager).ActivateGuiToggle(GuiActivateType.Stack, GuiActivateToggleType.Type);
