@@ -1,0 +1,254 @@
+{
+  "CostWeightHealthScaling": 0.0,
+  "Sounds": {
+    "ViewTheseOptions": false,
+    "Sounds": [],
+    "SoundCount": 0
+  },
+  "SubObjects": {
+    "ViewTheseOptions": false,
+    "SubObjectCount": 0,
+    "SubObjects": []
+  },
+  "MeshReference": {
+    "Reference": {
+      "Guid": "44b8cb3f-9f3f-47d1-ae5d-831cbfffe2f6",
+      "Name": "LUA Box"
+    },
+    "IsValidReference": true
+  },
+  "MaterialReference": {
+    "Reference": {
+      "Guid": "d58a0103-c23e-456e-a742-bcba6bc4e655",
+      "Name": "ai mat"
+    },
+    "IsValidReference": true
+  },
+  "ToolTipString": "",
+  "MirrorLaterialFlipReplacementReference": {
+    "Reference": {
+      "Guid": "00000000-0000-0000-0000-000000000000",
+      "Name": ""
+    },
+    "IsValidReference": false
+  },
+  "MirrorVerticalFlipReplacementReference": {
+    "Reference": {
+      "Guid": "00000000-0000-0000-0000-000000000000",
+      "Name": ""
+    },
+    "IsValidReference": false
+  },
+  "SizeInfo": {
+    "ViewTheseOptions": false,
+    "SizePos": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "SizeNeg": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "VolumeFactor": 1.0,
+    "VolumeBuoyancyExtraFactor": 1.0,
+    "ArrayPositionsUsed": 1,
+    "LocalCenter": "0,0,0",
+    "Volume": 1.0,
+    "BuoyancyVolume": 1.0,
+    "Dimensions": {
+      "x": 1,
+      "y": 1,
+      "z": 1
+    }
+  },
+  "AttachDirections": {
+    "Up": false,
+    "Down": true,
+    "Right": false,
+    "Left": false,
+    "Forwards": false,
+    "Back": false
+  },
+  "AllowAttachingDirections": {
+    "Up": false,
+    "Down": false,
+    "Right": false,
+    "Left": false,
+    "Forwards": false,
+    "Back": false
+  },
+  "Weight": 0.15,
+  "Health": 150.0,
+  "ArmourClass": 5.0,
+  "SalvageAndRepairFraction": 1.0,
+  "eRadarCrossSection": 30,
+  "RadarRelativeCrossSection": 0.03,
+  "LegacyGameObjectName": "LUA box",
+  "ExtraSettings": {
+    "CreateListOfTheseBlocks": true,
+    "UseCustomName": false,
+    "ExplosionOnDeath": 0,
+    "ViewTheseOptions": false,
+    "UseALowLodRender": true,
+    "WaterTight": true,
+    "BlockPathfinding": true,
+    "ViewMeshWhenPlacing": true,
+    "LocalRotationToForward": false,
+    "InventoryLinkUp": false,
+    "InventoryLinkDown": false,
+    "InventoryLinkLeft": false,
+    "InventoryLinkRight": false,
+    "PlaceableOnFortress": true,
+    "PlaceableOnStructure": true,
+    "PlaceableOnVehicle": true,
+    "PlaceableOnSubConstructable": 1,
+    "AutomaticallyGenerateCollider": true,
+    "StructuralComponent": false,
+    "EmpSusceptibility": 0.4,
+    "EmpResistivity": 10.0,
+    "EmpDamageFactor": 1.0,
+    "FractionHeatDamagePerMeterPenetration": 0.05,
+    "AllowsVisibleBandTransmission": false,
+    "RenderInImportantView": true
+  },
+  "DragSettings": {
+    "DragClearancePositionOne": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "DragClearancePositionTwo": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "DragFactorNeg": "1,1,1",
+    "DragFactorPos": "1,1,1",
+    "DragStopper": true,
+    "ViewTheseOptions": false,
+    "Geometry": 0
+  },
+  "Code": {
+    "GroupConnectionInfo": {
+      "BlockGroupReference": {
+        "Reference": {
+          "Guid": "00000000-0000-0000-0000-000000000000",
+          "Name": ""
+        },
+        "IsValidReference": false
+      },
+      "ViewTheseOptions": false,
+      "MatchCoreBlockOrientation": false,
+      "ReceiveDirections": {
+        "Up": false,
+        "Down": false,
+        "Right": false,
+        "Left": false,
+        "Forwards": false,
+        "Back": false
+      },
+      "SendDirections": {
+        "Up": false,
+        "Down": false,
+        "Right": false,
+        "Left": false,
+        "Forwards": false,
+        "Back": false
+      },
+      "ExtraRightUpForwardElementJumps": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "ExtraLeftDownBackElementJumps": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "SpreadToTypePermissions": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    "ViewTheseOptions": true,
+    "Variables": {
+      "Variables": [],
+      "VariableCount": 0
+    },
+    "ClassName": "ModNotifierBlock"
+  },
+  "ItemType": 0,
+  "LowLevelOfDetailColor": "0.36,0.18,0.2,0.989999",
+  "InventoryNameOverride": "",
+  "InventoryCategoryNameOverride": "",
+  "DisplayOnInventory": true,
+  "InventoryXPosition": 6,
+  "InventoryYPosition": 4,
+  "InventoryTabOrVariantId": {
+    "Reference": {
+      "Guid": "c105cfc3-1712-4d20-9ba9-3aedfc805007",
+      "Name": "Misc"
+    },
+    "IsValidReference": true
+  },
+  "IconReference": {
+    "Reference": {
+      "Guid": "00000000-0000-0000-0000-000000000000",
+      "Name": ""
+    },
+    "IsValidReference": false
+  },
+  "Complexity": 3,
+  "Unlock": null,
+  "HelpPageIdentifierReference": {
+    "Reference": {
+      "Guid": "00000000-0000-0000-0000-000000000000",
+      "Name": ""
+    },
+    "IsValidReference": false
+  },
+  "ExternalLink": {
+    "Name": "FtdModManager",
+    "Url": "https://github.com/Why7090/FtdModManager"
+  },
+  "Cost": {
+    "Material": 10.0
+  },
+  "ComponentId": {
+    "Guid": "e28edf51-9edf-429a-8695-2f8c90b3da8d",
+    "Name": "Mod Notifier"
+  },
+  "Description": "Notify for mod installation if a required mod isn't installed in the FtD instance."
+}

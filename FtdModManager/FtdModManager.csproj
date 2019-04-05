@@ -103,6 +103,7 @@
     <Compile Include="GeneralFolder.cs" />
     <Compile Include="Manager.cs" />
     <Compile Include="ManagerUI.cs" />
+    <Compile Include="ModNotifierBlock.cs" />
     <Compile Include="PopupMultiButton.cs" />
     <Compile Include="ModManagerPlugin.cs" />
     <Compile Include="Helper.cs" />
