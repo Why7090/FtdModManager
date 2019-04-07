@@ -10,13 +10,13 @@ using UnityEngine;
 
 namespace FtdModManager
 {
-    public class PopupMultiButton : AbstractPopup<PopMultiButton>
+    public class PopupMultiButton : AbstractPopup<PopSimple>
     {
         public readonly string message;
         public readonly List<ButtonOfPopup> buttons = new List<ButtonOfPopup>();
         private bool wrapText;
 
-        public PopupMultiButton(string title, string message, bool wrapText = true) : base(title, new PopMultiButton())
+        public PopupMultiButton(string title, string message, bool wrapText = true) : base(title, new PopSimple())
         {
             this.message = message;
             this.wrapText = wrapText;
@@ -32,7 +32,7 @@ namespace FtdModManager
         {
             Helper.Log("AddContentToWindow");
             var screenSegmentStandard = window.Screen.CreateStandardSegment(InsertPosition.OnCursor);
-            screenSegmentStandard.AddInterpretter(new SubjectiveDisplay<PopMultiButton>(_focus, M.m((PopMultiButton I) => message), null)
+            screenSegmentStandard.AddInterpretter(new SubjectiveDisplay<PopSimple>(_focus, M.m((PopSimple I) => message), null)
             {
                 WrapText = wrapText,
                 Justify = TextAnchor.UpperLeft
@@ -42,7 +42,7 @@ namespace FtdModManager
             seg.SqueezeTable = false;
             foreach (var button in buttons)
             {
-                seg.AddInterpretter(SubjectiveButton<PopMultiButton>.Quick(
+                seg.AddInterpretter(SubjectiveButton<PopSimple>.Quick(
                     _focus, button.label, button.toolTip, x =>
                 {
                     button.action?.Invoke(this);
@@ -69,7 +69,7 @@ namespace FtdModManager
         }
     }
 
-    public class PopMultiButton : Pop
+    public class PopSimple : Pop
     {
         public void Do() => Done = true;
     }

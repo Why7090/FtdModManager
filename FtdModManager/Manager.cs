@@ -49,7 +49,7 @@ namespace FtdModManager
             }
         }
 
-        public async Task Install(string uri, string name)
+        public async Task Install(string uri, string name = null)
         {
             var info = new FtdModUpdateInfo();
             bool success = await info.PrepareNewInstallation(uri, name);

@@ -10,6 +10,8 @@ namespace FtdModManager
 {
     public class ModManagerPlugin : GamePlugin_PostLoad
     {
+        public static ModManagerPlugin Instance { get; private set; }
+
         public string name => "FtdModManager";
 
         public Version version => new Version("0.3.1");
@@ -34,7 +36,7 @@ namespace FtdModManager
 
         public void OnLoad()
         {
-
+            Instance = this;
         }
         public void OnSave()
         {

@@ -53,8 +53,16 @@
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\From The Depths\From_The_Depths_Data\Managed\Ftd.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="GridCasts">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\From The Depths\From_The_Depths_Data\Managed\GridCasts.dll</HintPath>
+    </Reference>
     <Reference Include="Modding">
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\From The Depths\From_The_Depths_Data\Managed\Modding.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\From The Depths\From_The_Depths_Data\Managed\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="PlayerProfiles">
@@ -99,11 +107,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GeneralFile.cs" />
-    <Compile Include="GeneralFolder.cs" />
     <Compile Include="Manager.cs" />
     <Compile Include="ManagerUI.cs" />
-    <Compile Include="ModNotifierBlock.cs" />
+    <Compile Include="Notifier\ModNotificationPopup.cs" />
+    <Compile Include="Notifier\ModNotifierBlock.cs" />
+    <Compile Include="Notifier\ModNotifierBlockUI.cs" />
     <Compile Include="PopupMultiButton.cs" />
     <Compile Include="ModManagerPlugin.cs" />
     <Compile Include="Helper.cs" />

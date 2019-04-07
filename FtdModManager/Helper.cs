@@ -29,20 +29,6 @@ namespace FtdModManager
             }
         }
 
-        public static TreeSelectorGuiElement<GeneralFile, GeneralFolder> GetFileBrowser(GeneralFolder root)
-        {
-            var treeSelector = new TreeSelectorGuiElement<GeneralFile, GeneralFolder>(
-                root,
-                x => x.FileNameWithExtension,
-                x => x.Name,
-                x => x.GetFiles(),
-                x => x.GetFolders().Cast<GeneralFolder>(),
-                x => x.Sort((a, b) => a.ModifiedTime.CompareTo(b.ModifiedTime))
-            );
-
-            return treeSelector;
-        }
-
         public static void Log(string message)
         {
             Debug.Log("[ModManager] " + message);

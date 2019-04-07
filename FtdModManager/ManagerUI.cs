@@ -118,7 +118,7 @@ namespace FtdModManager
             (seg5.AddInterpretter(SubjectiveButton<Manager>.Quick(_focus, "Restart FtD", new ToolTip("Restart FtD in order to reload mods"),
                 x => _focus.RestartGame()))
                 .SetConditionalDisplayFunction(() => !isInstalling) as SubjectiveButton<Manager>)
-                .Color = new VSG<Color, Manager>(new Color(255 / 255f, 179 / 255f, 179 / 255f));
+                .Color = M.m<Manager>(new Color(255 / 255f, 179 / 255f, 179 / 255f));
 
             //window.Screen.CreateSpace();
             return window1;
