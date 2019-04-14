@@ -26,10 +26,10 @@ namespace FtdModManager
             manager.DetectMods();
             manager.CheckUpdate();
 
-            GameEvents.UpdateEvent += Helper.CreateKeyPressEvent(() =>
+            GameEvents.UpdateEvent += Helper.CreateKeyPressEvent(ts =>
             {
                 new ManagerUI(manager).ActivateGuiToggle(GuiActivateType.Stack, GuiActivateToggleType.Type);
-            }, false, new KeyDef(KeyCode.M, KeyMod.Ctrl)).ToDRegularEvent();
+            }, new KeyDef(KeyCode.M, KeyMod.Ctrl));
 
             return true;
         }

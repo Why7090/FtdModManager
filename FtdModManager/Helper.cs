@@ -45,21 +45,17 @@ namespace FtdModManager
             System.Diagnostics.Process.Start(path);
         }
 
-        public static KeyPressEvent CreateKeyPressEvent(KeyPressEvent.DKeyPressEvent keyPressed, bool useEvent, KeyDef key)
+        public static GameEvents.DRegularEvent CreateKeyPressEvent(Action<ITimeStep> keyPressed, KeyDef key)
         {
-            var ev = new KeyPressEvent(() =>
+            return ts =>
             {
-                return Input.GetKeyDown(key.Key)
+                if (Input.GetKeyDown(key.Key)
                     && key.ModifiersHappy
-                    && !key.UnneccessaryModifiers(ModifierAllows.CancelWhenUnnecessaryModifiers);
-            });
-            ev.KeyPressed += keyPressed;
-            return ev;
-        }
-
-        public static GameEvents.DRegularEvent ToDRegularEvent(this KeyPressEvent self)
-        {
-            return ts => self.CheckAndCallEvents();
+                    && !key.UnneccessaryModifiers(ModifierAllows.CancelWhenUnnecessaryModifiers))
+                {
+                    keyPressed(ts);
+                }
+            };
         }
     }
 }
