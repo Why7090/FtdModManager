@@ -18,7 +18,7 @@ You only have to install this once, and FtdModManager will automatically update 
 
 Manual
 -----
-Only use this method if the automatic one doesn't work or the target computer is not connected to the Web
+Only use this method if the automatic one doesn't work or the target computer is not connected to the Web  
 Don't forget to return here often to check new updates !
 
 1. Download [the archive of the latest version](https://github.com/Why7090/FtdModManager/archive/master.zip)
