@@ -3,6 +3,7 @@ FtdModManager
 
 *Automated mod installation and update for From The Depths*
 
+### [Changelog](https://github.com/Why7090/FtdModManager/blob/master/changelog.txt)
 
 Installation
 =====
