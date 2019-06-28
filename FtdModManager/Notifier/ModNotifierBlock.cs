@@ -118,7 +118,7 @@ namespace FtdModManager.Notifier
 
         public IEnumerable<Block> GetAllBlocks(AllConstruct c)
         {
-            var iBlocks = c.iBlocks;
+            var iBlocks = c.AllBasics;
 
             return iBlocks.AliveAndDead.Blocks
                 .Concat(iBlocks.SubConstructList.SelectMany(x => GetAllBlocks(x)));
